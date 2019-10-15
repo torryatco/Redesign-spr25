@@ -1,12 +1,37 @@
-# A Redesign
+# Redesign
 
 Log in to Github and create an empty repo called components.
 
 ** Download the zip file **
 
+- [Redesign](#redesign)
+  - [Homework](#homework)
+  - [Exercise - A Site Redesign](#exercise---a-site-redesign)
+  - [GIT](#git)
+  - [Deployment](#deployment)
+  - [Header](#header)
+  - [SASS](#sass)
+    - [Using Live SASS Compiler](#using-live-sass-compiler)
+    - [Nesting SASS](#nesting-sass)
+    - [Media Query - Mobile First](#media-query---mobile-first)
+    - [Variables](#variables)
+  - [Responsive Main Nav](#responsive-main-nav)
+    - [Large Screen](#large-screen)
+    - [Show/Hide Nav](#showhide-nav)
+  - [Video Component](#video-component)
+    - [Getting and Setting HTML Attributes](#getting-and-setting-html-attributes)
+    - [Updating the Video](#updating-the-video)
+  - [Refactoring Components](#refactoring-components)
+    - [Thinning the Templates](#thinning-the-templates)
+    - [Final trim](#final-trim)
+  - [Time Permitting](#time-permitting)
+  - [Images Carousel](#images-carousel)
+    - [Content Slider](#content-slider)
+  - [Notes](#notes)
+
 ## Homework
 
-Prepare your final project. 
+Prepare your final project.
 
 Your final project will be a static portfolio site generated using 11ty. You can use the JAMStack exercise as a foundation. I fully expect your project to be a work in progress therefore unfinished or partial projects are acceptable. However, it should include:
 
@@ -137,13 +162,13 @@ header p + p {
 }
 ```
 
-## Install sass
+## SASS
 
 Examine the directories in the ignore directory. 
 
 Copy and paste the contents of `styles.css` to `_base.scss`.
 
-Install sass
+Install sass:
 
 ```
 $ npm i -D sass
@@ -189,7 +214,7 @@ Call the sass partial from `styles.scss`
 ```
 
 
-## Using Live SASS Compiler
+### Using Live SASS Compiler
 
 If you prefer to use the VS Code plugin [Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass) for VS Code set the _workspace settings_ as shown:
 
@@ -217,7 +242,7 @@ Click the `Watch Sass` button at the bottom of the editor.
 
 Note: since we are compiling the css directly to the `_site` folder, there is no need for the passthrough in `.eleventy.js`.
 
-## Nesting SASS
+### Nesting SASS
 
 Cut/Add the header CSS from the base file and refactor the css in `_header.scss` file to use nesting.  
 
