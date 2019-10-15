@@ -24,7 +24,6 @@ Log in to Github and create an empty repo called components.
   - [Refactoring Components](#refactoring-components)
     - [Thinning the Templates](#thinning-the-templates)
     - [Final trim](#final-trim)
-  - [Time Permitting](#time-permitting)
   - [Images Carousel](#images-carousel)
     - [Content Slider](#content-slider)
   - [Notes](#notes)
@@ -53,7 +52,7 @@ Our hypothetical company has a site the looks outdated, is not responsive and ne
 We will be using many of the files and techniques we looked at last week. Before beginning, examine the changes.
 
 * .gitignore - now includes the `_site` directory
-* pages - instead of post we now have a pages collection - better naming convention than posts
+* pages - instead of posts we now have a pages collection
 * components - inside the `_includes` directory - breaking down a site into smaller parts is a key skill
 * layouts - our `layout.html` file now references the components above via `include`
 * .eleventyignore - instructs 11ty to not process `readme.md` (this file - for abvious reasons) and anything in the ignore directory (for convenience)
@@ -1139,8 +1138,6 @@ layout: layouts/layout.html
 
 {{ content }}
 ```
-
-## Time Permitting
 
 ## Images Carousel
 
