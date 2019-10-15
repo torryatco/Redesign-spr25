@@ -6,7 +6,7 @@ Log in to Github and create an empty repo called components.
 
 ## Homework
 
-Work on a final project. See session 7 for guidelines (TLDR - few).
+
 
 ## Exercise - A Site Redesign
 
@@ -41,8 +41,6 @@ I have renamed the pages:
 	"tags": ["pages", "nav"]
 }
 ```
-
-A bit of work-in-progress is available [here](https://confident-bell-a14295.netlify.com/).
 
 ## GIT
 
@@ -1263,7 +1261,8 @@ navTitle: Blog
 ```js
 document.addEventListener('click', clickHandlers)
 
-var nyt = 'https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=OuQiMDj0xtgzO80mtbAa4phGCAJW7GKa'
+var nyt =
+  'https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0';
 
 function clickHandlers(){
   if (event.target.matches('#pull')){
