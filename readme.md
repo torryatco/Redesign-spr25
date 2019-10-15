@@ -6,7 +6,16 @@ Log in to Github and create an empty repo called components.
 
 ## Homework
 
+Prepare your final project. 
 
+Your final project will be a static portfolio site generated using 11ty. You can use the JAMStack exercise as a foundation. I fully expect your project to be a work in progress therefore unfinished or partial projects are acceptable. However, it should include:
+
+* CSS (SASS is encouraged but not required)
+* DOM scripting - of any sort
+* A profile built from data in your Github profile using Fetch and the Github API, e.g. `https://api.github.com/users/DannyBoyNYC`
+* Responsive design
+
+Note: if you have another project in mind feel free to let me know.
 
 ## Exercise - A Site Redesign
 
