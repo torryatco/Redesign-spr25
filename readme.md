@@ -19,7 +19,7 @@ Note: if you have another project in mind feel free to let me know.
 
 ## Exercise - A Site Redesign
 
-Our hypothetical company has a site the looks outdated, is not responsive and needs updated content.
+Our hypothetical company has a site the looks outdated, is not responsive and needs to be broken up into multiple pages.
 
 [Here](http://oit2.scps.nyu.edu/~devereld/session8/app/) is what their site looks like.
 
@@ -27,7 +27,7 @@ Our hypothetical company has a site the looks outdated, is not responsive and ne
 
 We will be using many of the files and techniques we looked at last week. Before beginning, examine the changes.
 
-* .gitignore - now includes the `_site` directory (not critical - just pointing it out)
+* .gitignore - now includes the `_site` directory
 * pages - instead of post we now have a pages collection - better naming convention than posts
 * components - inside the `_includes` directory - breaking down a site into smaller parts is a key skill
 * layouts - our `layout.html` file now references the components above via `include`
