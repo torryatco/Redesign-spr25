@@ -1,4 +1,4 @@
-# VII - Components
+# A Redesign
 
 Log in to Github and create an empty repo called components.
 
