@@ -17,8 +17,8 @@ Log in to Github and create an empty repo called components.
     - [Media Query - Mobile First](#media-query---mobile-first)
     - [Variables](#variables)
   - [Responsive Main Nav](#responsive-main-nav)
-    - [Large Screen](#large-screen)
     - [Show/Hide Nav](#showhide-nav)
+    - [Large Screen](#large-screen)
   - [Video Component](#video-component)
     - [Getting and Setting HTML Attributes](#getting-and-setting-html-attributes)
     - [Updating the Video](#updating-the-video)
@@ -398,17 +398,7 @@ We will use this to show a menu on small screens.
 - import it into `styles.css` with `@import 'imports/nav';`
 - IMPORTANT - remove all references to nav in `_base.scss`
 
-Small screen first - hide the navigation
-
-```css
-nav {
-  ul {
-    display: none;
-  }
-}
-```
-
-Show and format the hamburger menu:
+Small screen first - show and format the hamburger menu:
 
 ```css
 #pull {
@@ -429,112 +419,38 @@ Show and format the hamburger menu:
 }
 ```
 
-### Large Screen
-
-Add media queries for medium and larger screens
-
-Hide the hamburger on wider screens:
-
-```css
-#pull {
-  🔥 @media (min-width: $break-med) {
-    display: none;
-  }
-}
-```
-
-Show the navigation on large screens:
+Format the ul for the small screen:
 
 ```css
 nav ul {
-  display: none;
+  /* display: none; */
   list-style: none;
-  @media (min-width: $break-med) {
-    display: flex;
-    justify-content: space-between;
-    background: $link;
-    text-align: center;
-  }
-}
-```
-
-We can't see the anchor tags (because they are the same color as the navbar) or the active state:
-
-```css
-nav li {
-  padding: 1rem;
-}
-nav a {
-  color: #fff;
+  background-color: $link;
 }
 
-nav a:hover {
-  text-decoration: none;
-}
-
-nav .active a {
-  font-weight: bold;
-}
-```
-
-Note - `space-around` is probably a better choice for the ul formatting here.
-
-Format the list items (horizontal display) and add a hover effect using SASS ampersand notation:
-
-```css
-nav li {
-  padding: 1rem;
-  @media (min-width: $break-med) {
-    flex-grow: 1;
-    &:hover {
-      background-color: darken($link, 10%);
-    }
-  }
-}
-```
-
-Note the use of flex-grow to allow the li's to expand. Note that the entire hover effect area is not clickable.
-
-We will transfer the padding to the links and set them to display block so they fill the entire width and height of their container.
-
-```css
-nav li {
-  // padding: 1rem;
-  @media (min-width: $break-sm) {
-    flex-grow: 1;
-    &:hover {
-      background-color: darken($link, 10%);
-    }
-  }
+nav li:hover:not(.active) {
+  background-color: lighten($link, 10%);
 }
 
 nav a {
   padding: 1rem;
   color: #fff;
-  @media (min-width: $break-sm) {
-    display: block;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+  &:hover {
+    text-decoration: none;
   }
 }
 
 nav .active {
   background-color: darken($link, 10%);
 }
-```
 
-Change the hover on an active tab
-
-```css
-nav li {
-  @media (min-width: $break-sm) {
-    flex-grow: 1;
-    &:hover:not(.active) {
-      background-color: lighten($link, 10%);
-    }
-  }
+nav .active a {
+  font-weight: bold;
 }
 ```
-
-Note: this selector compiles to `nav li:hover:not(.active)`
 
 ### Show/Hide Nav
 
@@ -565,7 +481,7 @@ function clickHandlers() {
 }
 ```
 
-Add a .show-nav class to the `_nav.scss`:
+Add a `.show-nav` class to `_nav.scss`:
 
 ```css
 .show-nav nav ul {
@@ -576,90 +492,67 @@ Add a .show-nav class to the `_nav.scss`:
 }
 ```
 
-<!-- Decorate the list items in the default small screen view:
+### Large Screen
+
+Add media queries for medium and larger screens
+
+Hide the hamburger on wider screens:
 
 ```css
-nav {
-	🔥
-	li {
-		background: $light-gray;
-		border-bottom: 1px solid #fff;
-		@media (min-width: $break-sm){
-			flex-grow: 1;
-			background: $link;
-			&:hover {
-				background: $text;
-			}
-		}
-	}
-	🔥
+#pull {
+  display: block;
+  background-color: $link;
+  height: 48px;
+  padding-top: 12px;
+  padding-left: 12px;
+  @media (min-width: $break-med) {
+    display: none;
+  }
 }
-``` -->
+```
 
-<!-- Also, make the menu items extra easy to click on mobile:
-
-```css
-.show-nav nav ul {
-	🔥
-	li {
-		padding: 1rem;
-	}
-}
-``` -->
-
-Check the navigation on both sizes and make adjustments as necessary.
-
-Add a background color to the `ul`, move the highlight effect to the small screen and more.
+Show the navigation on large screens:
 
 ```css
 nav ul {
   display: none;
   list-style: none;
-  // NEW
   background-color: $link;
   @media (min-width: $break-med) {
     display: flex;
     justify-content: space-around;
+    background: $link;
     text-align: center;
   }
 }
+```
 
+Format the flex children to allow them to grow:
+
+```css
 nav li {
-  padding: 1rem;
   &:hover:not(.active) {
     background-color: lighten($link, 10%);
   }
   @media (min-width: $break-med) {
-    padding: 0;
     flex-grow: 1;
   }
 }
+```
 
-nav a {
-  padding: 1rem;
-  color: #fff;
-  display: inline-block;
-  width: 100%;
-  box-sizing: border-box;
-  @media (min-width: $break-med) {
-    display: block;
-  }
-  &:hover {
-    text-decoration: none;
-  }
-}
+`flex-grow` allows the li's to expand.
 
-nav .active {
-  background-color: darken($link, 10%);
-}
+The complex selector with the ampersand compiles to `nav li:hover:not(.active)`. Without the ampersand it compiles to `nav li :hover:not(.active)`. See [CSS Tricks](https://css-tricks.com/the-sass-ampersand/) for more information on the ampersand in SASS.
 
-nav .active a {
-  font-weight: bold;
-}
+Check the navigation on both sizes and make adjustments as necessary.
 
+Here is the final `_nav.scss`:
+
+```css
 #pull {
   display: block;
   background-color: $link;
+  height: 48px;
   padding-top: 12px;
   padding-left: 12px;
   @media (min-width: $break-med) {
@@ -676,6 +569,46 @@ nav .active a {
   display: inline-block;
 }
 
+nav ul {
+  display: none;
+  list-style: none;
+  background-color: $link;
+  @media (min-width: $break-med) {
+    display: flex;
+    justify-content: space-around;
+    background: $link;
+    text-align: center;
+  }
+}
+
+nav li {
+  &:hover:not(.active) {
+    background-color: lighten($link, 10%);
+  }
+  @media (min-width: $break-med) {
+    flex-grow: 1;
+  }
+}
+
+nav a {
+  padding: 1rem;
+  color: #fff;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+nav .active {
+  background-color: darken($link, 10%);
+}
+
+nav .active a {
+  font-weight: bold;
+}
+
 .show-nav nav ul {
   display: flex;
   flex-direction: column;
@@ -690,7 +623,7 @@ Note: if we were using React or Angular or Vue to make a single page app (SPA) w
 
 ## Video Component
 
-Add the component to `layout.html`
+Add the component to `videos.md`
 
 ```html
 <section>
