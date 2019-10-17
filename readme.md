@@ -22,7 +22,6 @@ Log in to Github and create an empty repo called components.
   - [Video Component](#video-component)
     - [Getting and Setting HTML Attributes](#getting-and-setting-html-attributes)
     - [Updating the Video](#updating-the-video)
-  - [Refactoring Components](#refactoring-components)
     - [Thinning the Templates](#thinning-the-templates)
     - [Final trim](#final-trim)
   - [Images Carousel](#images-carousel)
@@ -639,6 +638,7 @@ Format the video and buttons in a new `_video.scss`:
 .content-video {
   iframe {
     background: #222;
+    height: 320px;
   }
   .btn-list {
     padding: 6px;
@@ -674,7 +674,7 @@ ul {
 
 Clicking the buttons should reveal a different video.
 
-Create variables and spread the links into an array.
+Create variables and a function:
 
 ```js
 const videoLinks = document.querySelectorAll('.content-video a');
@@ -754,6 +754,7 @@ and set its src attribute:
 ```js
 const iFrame = document.querySelector('iframe'); // NEW
 const videoLinks = document.querySelectorAll('.content-video a');
+
 videoLinks.forEach(videoLink =>
   videoLink.addEventListener('click', selectVideo)
 );
@@ -816,7 +817,7 @@ Note: our clickHandlers function is getting out of hand. You could use a separat
 ```js
 function clickHandlers() {
   if (event.target.matches('#pull')) {
-    document.querySelector('body').classList.toggle('show-nav');
+    showMenu();
     event.preventDefault();
   }
   if (event.target.matches('.content-video a')) {
@@ -824,6 +825,10 @@ function clickHandlers() {
     event.preventDefault();
   }
 }
+
+var showMenu = function() {
+  document.querySelector('body').classList.toggle('show-nav');
+};
 
 var videoSwitch = function() {
   const iFrame = document.querySelector('iframe');
@@ -835,7 +840,7 @@ var videoSwitch = function() {
 };
 ```
 
-## Refactoring Components
+<!-- ## Refactoring Components
 
 Suppose we want to remove the video content from all pages except Home and Videos. We also want to add the video section to the video page without the aside.
 
@@ -899,7 +904,9 @@ In `layout.html`, include the two new components using article and aside tags
 </section>
 ```
 
-Add to base.scss (wide screen only)
+-->
+
+Add to base.scss:
 
 ```css
 section {
@@ -908,7 +915,7 @@ section {
     margin: 0 auto;
     display: grid;
     grid-template-columns: 3fr 2fr;
-    grid-column-gap: 2rem;
+    grid-column-gap: 1rem;
     padding-top: 2rem;
     article {
       iframe {
@@ -916,10 +923,13 @@ section {
       }
     }
   }
+  aside p {
+    margin: 1rem 0;
+  }
 }
 ```
 
-We want the video section to appear on only the home page and in the video page.
+<!-- We want the video section to appear on only the home page and in the video page.
 
 - Save out two copies of `layout.html` as `layouts/home.html` and `layouts/video.html`
 - Use these templates for rendering e.g.:
@@ -1083,7 +1093,7 @@ layout: layouts/layout.html
 ---
 
 {% include components/video-article.html %} {{ content }}
-```
+``` -->
 
 ## Images Carousel
 
