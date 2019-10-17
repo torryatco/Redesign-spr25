@@ -9,10 +9,10 @@ Log in to Github and create an empty repo called components.
   - [Exercise - A Site Redesign](#exercise---a-site-redesign)
   - [GIT](#git)
   - [Deployment](#deployment)
-  - [Navigation](#navigation)
+  - [Setup and Navigation](#setup-and-navigation)
   - [Header](#header)
   - [SASS](#sass)
-    - [Using Live SASS Compiler](#using-live-sass-compiler)
+    - [Aside: Using Live SASS Compiler in VS Code](#aside-using-live-sass-compiler-in-vs-code)
     - [Nesting SASS](#nesting-sass)
     - [Media Query - Mobile First](#media-query---mobile-first)
     - [Variables](#variables)
@@ -126,7 +126,19 @@ $ git checkout master
 $ git push -u origin master
 ```
 
-## Navigation
+## Setup and Navigation
+
+There is an erro in the console on every page due to the script that bring in content from the New York Times.
+
+We can correct it by making the execution dependant on the pageClass:
+
+```js
+// getData();
+
+if (document.querySelector('.blog')) {
+  getData();
+}
+```
 
 Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
 
@@ -142,38 +154,11 @@ Update the [navigation](https://www.11ty.io/docs/) to include an active class us
 
 ## Header
 
-Add the first component to `layout.js` after the nav include:
+Add the first component to `layout.js` after the nav include, e.g.:
 
 ```
+{% include components/nav.html %}
 {% include components/header.html %}
-```
-
-And the following to `static/css/styles.css`
-
-```css
-header {
-  max-width: 980px;
-  margin: 0 auto;
-  padding-top: 2rem;
-}
-header h1 {
-  font-size: 3rem;
-}
-header p {
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  line-height: 1.1;
-  margin-bottom: 1rem;
-}
-header h1 + p {
-  padding-top: 1rem;
-  border-top: 3px double #dbd1b5;
-}
-header p + p {
-  font-size: 1rem;
-  line-height: 1.1;
-  color: #999;
-}
 ```
 
 ## SASS
@@ -227,7 +212,7 @@ Call the sass partial from `styles.scss`
 @import 'imports/base';
 ```
 
-### Using Live SASS Compiler
+### Aside: Using Live SASS Compiler in VS Code
 
 If you prefer to use the VS Code plugin [Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass) for VS Code set the _workspace settings_ as shown:
 
@@ -257,7 +242,7 @@ Note: since we are compiling the css directly to the `_site` folder, there is no
 
 ### Nesting SASS
 
-Cut/Add the header CSS from the base file and refactor the css in `_header.scss` file to use nesting.
+Add header CSS to a new `_header.scss` file using nesting:
 
 ```css
 header {
