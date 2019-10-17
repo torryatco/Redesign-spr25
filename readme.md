@@ -6,6 +6,7 @@ Log in to Github and create an empty repo called components.
 
 - [Redesign](#redesign)
   - [Homework](#homework)
+  - [Reading](#reading)
   - [Exercise - A Site Redesign](#exercise---a-site-redesign)
   - [GIT](#git)
   - [Deployment](#deployment)
@@ -40,6 +41,12 @@ Your final project will be a static portfolio site generated using 11ty. You can
 - Responsive design
 
 Note: if you have another project in mind feel free to let me know.
+
+## Reading
+
+- [Using Git, Github and 11ty](https://youtu.be/PqlhYVqLDm0) together to create a simple site.
+- Also [Oh Shit Git](https://ohshitgit.com)
+- and don't forget the [11ty](https://www.11ty.io/docs/templates/) documentation
 
 ## Exercise - A Site Redesign
 
@@ -1226,6 +1233,41 @@ function runCarousel() {
   carouselPara.innerHTML = titleText;
   event.preventDefault();
 }
+```
+
+Finally, use event delegation:
+
+```js
+function clickHandlers() {
+  if (event.target.matches('#pull')) {
+    showMenu();
+    event.preventDefault();
+  }
+  if (event.target.matches('.content-video a')) {
+    videoSwitch();
+    event.preventDefault();
+  }
+  if (event.target.closest('.image-tn a')) {
+    runCarousel();
+    event.preventDefault();
+  }
+}
+```
+
+```js
+// images
+
+function runCarousel() {
+  const carousel = document.querySelector('figure img');
+  const carouselPara = document.querySelector('figcaption');
+  const imageHref = event.target.parentNode.getAttribute('href');
+  const titleText = event.target.title;
+  carousel.setAttribute('src', imageHref);
+  carouselPara.innerHTML = titleText;
+  event.preventDefault();
+}
+
+// end images
 ```
 
 ## Notes
