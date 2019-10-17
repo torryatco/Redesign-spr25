@@ -9,6 +9,7 @@ Log in to Github and create an empty repo called components.
   - [Exercise - A Site Redesign](#exercise---a-site-redesign)
   - [GIT](#git)
   - [Deployment](#deployment)
+  - [Navigation](#navigation)
   - [Header](#header)
   - [SASS](#sass)
     - [Using Live SASS Compiler](#using-live-sass-compiler)
@@ -34,10 +35,10 @@ Prepare your final project.
 
 Your final project will be a static portfolio site generated using 11ty. You can use the JAMStack exercise as a foundation. I fully expect your project to be a work in progress therefore unfinished or partial projects are acceptable. However, it should include:
 
-* CSS (SASS is encouraged but not required)
-* DOM scripting - of any sort
-* A profile built from data in your Github profile using Fetch and the Github API, e.g. `https://api.github.com/users/DannyBoyNYC`
-* Responsive design
+- CSS (SASS is encouraged but not required)
+- DOM scripting - of any sort
+- A profile built from data in your Github profile using Fetch and the Github API, e.g. `https://api.github.com/users/DannyBoyNYC`
+- Responsive design
 
 Note: if you have another project in mind feel free to let me know.
 
@@ -51,22 +52,22 @@ Our hypothetical company has a site the looks outdated, is not responsive and ne
 
 We will be using many of the files and techniques we looked at last week. Before beginning, examine the changes.
 
-* .gitignore - now includes the `_site` directory
-* pages - instead of posts we now have a pages collection
-* components - inside the `_includes` directory - breaking down a site into smaller parts is a key skill
-* layouts - our `layout.html` file now references the components above via `include`
-* .eleventyignore - instructs 11ty to not process `readme.md` (this file - for abvious reasons) and anything in the ignore directory (for convenience)
-* static directory - reorganized assets
-* .eleventy.js - passthroughs for images, JS and CSS in the static directory
-* scripts.js - removed dependency on pressing a button and call the function directly (produces an error in the console on every page except Blog)
-* `home.md` uses a permalink (`/`) in the front matter which means it will not render to its own directory in the _site folder but will instead render to the top level (i.e. it becomes our main `index.html`)
+- .gitignore - now includes the `_site` directory
+- pages - instead of posts we now have a pages collection
+- components - inside the `_includes` directory - breaking down a site into smaller parts is a key skill
+- layouts - our `layout.html` file now references the components above via `include`
+- .eleventyignore - instructs 11ty to not process `readme.md` (this file - for abvious reasons) and anything in the ignore directory (for convenience)
+- static directory - reorganized assets
+- .eleventy.js - passthroughs for images, JS and CSS in the static directory
+- scripts.js - removed dependency on pressing a button and call the function directly (produces an error in the console on every page except Blog)
+- `home.md` uses a permalink (`/`) in the front matter which means it will not render to its own directory in the \_site folder but will instead render to the top level (i.e. it becomes our main `index.html`)
 
 I have renamed the pages:
 
-* the ajax page is now called Blog
-* `pages/blog.html` is the only page that uses a `pageClass: blog` property (which, in turn, works with the template's `<body class="{{ pageClass }}">`)
-* there is a new videos page
-* the `pages.json` file (formerly `posts.json`) now tags all files in the pages folder as follows:
+- the ajax page is now called Blog
+- `pages/blog.html` is the only page that uses a `pageClass: blog` property (which, in turn, works with the template's `<body class="{{ pageClass }}">`)
+- there is a new videos page
+- the `pages.json` file (formerly `posts.json`) now tags all files in the pages folder as follows:
 
 ```js
 {
@@ -107,7 +108,7 @@ We'll use [Netlify](https://www.netlify.com/) to put this on the web. Register a
 
 We can also hook into a Github branch to set up [continuous delpoyment](https://app.netlify.com/start). Here is a [sample](https://agitated-bartik-814348.netlify.com/) with [admin](https://agitated-bartik-814348.netlify.com/admin).
 
-* use the terminal to create and checkout a new branch
+- use the terminal to create and checkout a new branch
 
 ```sh
 $ git branch dev
@@ -125,9 +126,23 @@ $ git checkout master
 $ git push -u origin master
 ```
 
+## Navigation
+
+Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
+
+```html
+<ul>
+  {% for nav in collections.nav %}
+  <li class="{% if nav.url == page.url %} active{% endif %}">
+    <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
+  </li>
+  {%- endfor -%}
+</ul>
+```
+
 ## Header
 
-Add the first component to `layout.js` after the nav include
+Add the first component to `layout.js` after the nav include:
 
 ```
 {% include components/header.html %}
@@ -142,28 +157,28 @@ header {
   padding-top: 2rem;
 }
 header h1 {
-	font-size: 3rem;
+  font-size: 3rem;
 }
 header p {
-	font-size: 1.5rem;
-	text-transform: uppercase;
-	line-height: 1.1;
-	margin-bottom: 1rem;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin-bottom: 1rem;
 }
 header h1 + p {
-	padding-top: 1rem;
-	border-top: 3px double #dbd1b5;
+  padding-top: 1rem;
+  border-top: 3px double #dbd1b5;
 }
 header p + p {
-	font-size: 1rem;
-	line-height: 1.1;
-	color: #999;
+  font-size: 1rem;
+  line-height: 1.1;
+  color: #999;
 }
 ```
 
 ## SASS
 
-Examine the directories in the ignore directory. 
+Examine the directories in the ignore directory.
 
 Copy and paste the contents of `styles.css` to `_base.scss`.
 
@@ -212,7 +227,6 @@ Call the sass partial from `styles.scss`
 @import 'imports/base';
 ```
 
-
 ### Using Live SASS Compiler
 
 If you prefer to use the VS Code plugin [Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass) for VS Code set the _workspace settings_ as shown:
@@ -243,7 +257,7 @@ Note: since we are compiling the css directly to the `_site` folder, there is no
 
 ### Nesting SASS
 
-Cut/Add the header CSS from the base file and refactor the css in `_header.scss` file to use nesting.  
+Cut/Add the header CSS from the base file and refactor the css in `_header.scss` file to use nesting.
 
 ```css
 header {
@@ -271,9 +285,9 @@ header {
 }
 ```
 
-Compare the resulting css file with the source sass file. 
+Compare the resulting css file with the source sass file.
 
-Inspect the header in the developer tools and note that *mapping* maps the css line numbers to the scss line numbers
+Inspect the header in the developer tools and note that _mapping_ maps the css line numbers to the scss line numbers
 
 ### Media Query - Mobile First
 
@@ -282,7 +296,7 @@ Add a media query to hide the header paragraphs on small screens.
 Normally this would be written as:
 
 ```css
-@media (max-width: 780px){
+@media (max-width: 780px) {
   header p {
     display: none;
   }
@@ -293,27 +307,26 @@ But because we are nesting we can simply write (in `_header.scss`):
 
 ```css
 p {
-  ...
-  @media (max-width: 780px){
+  ... @media (max-width: 780px) {
     display: none;
   }
 }
 ```
 
-Note: this is *not* a mobile first design pattern. It uses `max-width` to add display attributes to small screens.
+Note: this is _not_ a mobile first design pattern. It uses `max-width` to add display attributes to small screens.
 
 Change it to use a `min-width` mobile first design pattern:
 
 ```css
 p {
-	display: none;
-	@media (min-width: 780px){
-		display: block;
-		font-size: 1.5rem;
-		text-transform: uppercase;
-		line-height: 1.1;
-		margin-bottom: 1rem;
-	}
+  display: none;
+  @media (min-width: 780px) {
+    display: block;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
 }
 ```
 
@@ -361,7 +374,7 @@ header {
   }
   p {
     display: none;
-    @media (min-width: $break-med){
+    @media (min-width: $break-med) {
       display: block;
       font-size: 1.5rem;
       text-transform: uppercase;
@@ -383,30 +396,30 @@ header {
 
 ## Responsive Main Nav
 
-Note the link `<a href="#" id="pull"></a>` in the nav. 
+Note the link `<a href="#" id="pull"></a>` in the nav.
 
 ```html
-  <nav>
-    <a href="#" id="pull"></a>
-    <ul>
-      ...
-    </ul>
-  </nav>
+<nav>
+  <a href="#" id="pull"></a>
+  <ul>
+    ...
+  </ul>
+</nav>
 ```
 
 We will use this to show a menu on small screens.
 
-* create a sass partial `_nav.scss` 
-* import it into `styles.css` with `@import 'imports/nav';`
-* IMPORTANT - remove all references to nav in `_base.scss`
+- create a sass partial `_nav.scss`
+- import it into `styles.css` with `@import 'imports/nav';`
+- IMPORTANT - remove all references to nav in `_base.scss`
 
 Small screen first - hide the navigation
 
 ```css
 nav {
-	ul {
-		display: none;
-	}
+  ul {
+    display: none;
+  }
 }
 ```
 
@@ -422,11 +435,11 @@ Show and format the hamburger menu:
 }
 
 #pull::after {
-  content:"";
+  content: '';
   background: url(../img/nav-icon.png) no-repeat;
   width: 22px;
   height: 22px;
-  background-size: cover; 
+  background-size: cover;
   display: inline-block;
 }
 ```
@@ -439,10 +452,9 @@ Hide the hamburger on wider screens:
 
 ```css
 #pull {
-	🔥
-	@media (min-width: $break-med) {
-		display: none;
-	}
+  🔥 @media (min-width: $break-med) {
+    display: none;
+  }
 }
 ```
 
@@ -452,7 +464,7 @@ Show the navigation on large screens:
 nav ul {
   display: none;
   list-style: none;
-  @media (min-width: $break-med){
+  @media (min-width: $break-med) {
     display: flex;
     justify-content: space-between;
     background: $link;
@@ -487,10 +499,10 @@ Format the list items (horizontal display) and add a hover effect using SASS amp
 ```css
 nav li {
   padding: 1rem;
-  @media (min-width: $break-med){
+  @media (min-width: $break-med) {
     flex-grow: 1;
     &:hover {
-      background-color: darken( $link, 10% );
+      background-color: darken($link, 10%);
     }
   }
 }
@@ -503,10 +515,10 @@ We will transfer the padding to the links and set them to display block so they 
 ```css
 nav li {
   // padding: 1rem;
-  @media (min-width: $break-sm){
+  @media (min-width: $break-sm) {
     flex-grow: 1;
     &:hover {
-      background-color: darken( $link, 10% );
+      background-color: darken($link, 10%);
     }
   }
 }
@@ -514,13 +526,13 @@ nav li {
 nav a {
   padding: 1rem;
   color: #fff;
-  @media (min-width: $break-sm){
+  @media (min-width: $break-sm) {
     display: block;
   }
 }
 
 nav .active {
-  background-color: darken( $link, 10% );
+  background-color: darken($link, 10%);
 }
 ```
 
@@ -528,10 +540,10 @@ Change the hover on an active tab
 
 ```css
 nav li {
-  @media (min-width: $break-sm){
+  @media (min-width: $break-sm) {
     flex-grow: 1;
     &:hover:not(.active) {
-      background-color: lighten( $link, 10% );
+      background-color: lighten($link, 10%);
     }
   }
 }
@@ -544,13 +556,13 @@ Note: this selector compiles to `nav li:hover:not(.active)`
 Add to the top of `static/js/scripts`:
 
 ```js
-var hamburger = document.querySelector('#pull')
-var body = document.querySelector('body')
+var hamburger = document.querySelector('#pull');
+var body = document.querySelector('body');
 
-hamburger.addEventListener('click', showMenu)
+hamburger.addEventListener('click', showMenu);
 
-function showMenu(){
-  body.classList.toggle('show-nav')
+function showMenu() {
+  body.classList.toggle('show-nav');
   event.preventDefault();
 }
 ```
@@ -558,9 +570,9 @@ function showMenu(){
 or, using event delegation:
 
 ```js
-function clickHandlers(){
-  console.log(event.target)
-  if (event.target.matches('#pull')){
+function clickHandlers() {
+  console.log(event.target);
+  if (event.target.matches('#pull')) {
     document.querySelector('body').classList.toggle('show-nav');
     event.preventDefault();
   }
@@ -572,10 +584,10 @@ Add a .show-nav class to the `_nav.scss`:
 
 ```css
 .show-nav nav ul {
-	display: flex;
-	flex-direction: column;
-	position: absolute;
-	width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
 }
 ```
 
@@ -620,7 +632,7 @@ nav ul {
   list-style: none;
   // NEW
   background-color: $link;
-  @media (min-width: $break-med){
+  @media (min-width: $break-med) {
     display: flex;
     justify-content: space-around;
     text-align: center;
@@ -630,9 +642,9 @@ nav ul {
 nav li {
   padding: 1rem;
   &:hover:not(.active) {
-    background-color: lighten( $link, 10% );
+    background-color: lighten($link, 10%);
   }
-  @media (min-width: $break-med){
+  @media (min-width: $break-med) {
     padding: 0;
     flex-grow: 1;
   }
@@ -644,7 +656,7 @@ nav a {
   display: inline-block;
   width: 100%;
   box-sizing: border-box;
-  @media (min-width: $break-med){
+  @media (min-width: $break-med) {
     display: block;
   }
   &:hover {
@@ -653,7 +665,7 @@ nav a {
 }
 
 nav .active {
-  background-color: darken( $link, 10% );
+  background-color: darken($link, 10%);
 }
 
 nav .active a {
@@ -671,19 +683,19 @@ nav .active a {
 }
 
 #pull::after {
-  content:"";
+  content: '';
   background: url(../img/nav-icon.png) no-repeat;
   width: 22px;
   height: 22px;
-  background-size: cover; 
+  background-size: cover;
   display: inline-block;
 }
 
 .show-nav nav ul {
-	display: flex;
-	flex-direction: column;
-	position: absolute;
-	width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
 }
 ```
 
@@ -707,25 +719,25 @@ Format the video and buttons in a new `_video.scss`:
 
 ```css
 .content-video {
-	iframe {
+  iframe {
     background: #222;
   }
-	.btn-list {
-		padding: 6px;
-		display: flex;
-		li {
+  .btn-list {
+    padding: 6px;
+    display: flex;
+    li {
       margin: 1rem;
       a {
         text-decoration: none;
       }
-		}
-		.active {
-			border-radius: 4px;
-			background: $link;
-			color: #fff;
-			padding: 0.5rem;
-		}
-	}
+    }
+    .active {
+      border-radius: 4px;
+      background: $link;
+      color: #fff;
+      padding: 0.5rem;
+    }
+  }
 }
 ```
 
@@ -750,10 +762,10 @@ Create variables and spread the links into an array.
 const videoLinks = document.querySelectorAll('.content-video a');
 
 videoLinks.forEach(videoLink =>
-	videoLink.addEventListener('click', function() {
+  videoLink.addEventListener('click', function() {
     console.log(event.target);
-		event.preventDefault();
-	})
+    event.preventDefault();
+  })
 );
 ```
 
@@ -763,19 +775,21 @@ Add a `selectVideo` function:
 
 ```js
 const videoLinks = document.querySelectorAll('.content-video a');
-videoLinks.forEach(videoLink => videoLink.addEventListener('click', selectVideo));
+videoLinks.forEach(videoLink =>
+  videoLink.addEventListener('click', selectVideo)
+);
 
-  // for (let i = 0; i < videoLinks.length; i++){
-  //   videoLinks[i].addEventListener('click', selectVideo)
-  // }
+// for (let i = 0; i < videoLinks.length; i++){
+//   videoLinks[i].addEventListener('click', selectVideo)
+// }
 
 function selectVideo() {
-	console.log(event.target);
-	event.preventDefault();
+  console.log(event.target);
+  event.preventDefault();
 }
 ```
 
-Note: we are using `forEach` - a method that exists for both nodeLists and Arrays - as a replacement for a traditional for loop (commented out). 
+Note: we are using `forEach` - a method that exists for both nodeLists and Arrays - as a replacement for a traditional for loop (commented out).
 
 Examine the nodelist in the console.
 
@@ -799,13 +813,13 @@ Isolate the `href` value using `getAttribute`:
 const videoLinks = Array.from(document.querySelectorAll('.content-video a'));
 
 videoLinks.forEach(videoLink =>
-	videoLink.addEventListener('click', selectVideo)
+  videoLink.addEventListener('click', selectVideo)
 );
 
 function selectVideo() {
-	const videoToPlay = event.target.getAttribute('href');
-	console.log(videoToPlay);
-	event.preventDefault();
+  const videoToPlay = event.target.getAttribute('href');
+  console.log(videoToPlay);
+  event.preventDefault();
 }
 ```
 
@@ -822,13 +836,15 @@ and set its src attribute:
 ```js
 const iFrame = document.querySelector('iframe'); // NEW
 const videoLinks = document.querySelectorAll('.content-video a');
-videoLinks.forEach(videoLink => videoLink.addEventListener('click', selectVideo));
+videoLinks.forEach(videoLink =>
+  videoLink.addEventListener('click', selectVideo)
+);
 
 function selectVideo() {
-	const videoToPlay = event.target.getAttribute('href');
-	iFrame.setAttribute('src', videoToPlay); // NEW
-	console.log(iFrame); // NEW
-	event.preventDefault();
+  const videoToPlay = event.target.getAttribute('href');
+  iFrame.setAttribute('src', videoToPlay); // NEW
+  console.log(iFrame); // NEW
+  event.preventDefault();
 }
 ```
 
@@ -837,33 +853,35 @@ Switch the active class:
 ```js
 const iFrame = document.querySelector('iframe');
 const videoLinks = document.querySelectorAll('.content-video a');
-videoLinks.forEach(videoLink => videoLink.addEventListener('click', selectVideo));
+videoLinks.forEach(videoLink =>
+  videoLink.addEventListener('click', selectVideo)
+);
 
 function selectVideo() {
-	removeActiveClass(); // NEW
-	this.classList.add('active'); // NEW
-	const videoToPlay = event.target.getAttribute('href');
-	iFrame.setAttribute('src', videoToPlay);
-	event.preventDefault();
+  removeActiveClass(); // NEW
+  this.classList.add('active'); // NEW
+  const videoToPlay = event.target.getAttribute('href');
+  iFrame.setAttribute('src', videoToPlay);
+  event.preventDefault();
 }
 
 // NEW
 function removeActiveClass() {
-	videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
+  videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
 }
 ```
 
-For performance reasons, you also should not loop over each element and attach an even listener to it. 
+For performance reasons, you also should not loop over each element and attach an even listener to it.
 
 Use event delegation:
 
 ```js
-function clickHandlers(){
-  if (event.target.matches('#pull')){
+function clickHandlers() {
+  if (event.target.matches('#pull')) {
     document.querySelector('body').classList.toggle('show-nav');
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')){
+  if (event.target.matches('.content-video a')) {
     const iFrame = document.querySelector('iframe');
     const videoLinks = document.querySelectorAll('.content-video a');
     videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
@@ -878,25 +896,25 @@ function clickHandlers(){
 Note: our clickHandlers function is getting out of hand. You could use a separate function to tame it a bit:
 
 ```js
-function clickHandlers(){
-  if (event.target.matches('#pull')){
+function clickHandlers() {
+  if (event.target.matches('#pull')) {
     document.querySelector('body').classList.toggle('show-nav');
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')){
-    videoSwitch()
+  if (event.target.matches('.content-video a')) {
+    videoSwitch();
     event.preventDefault();
   }
 }
 
-var videoSwitch = function () {
+var videoSwitch = function() {
   const iFrame = document.querySelector('iframe');
-    const videoLinks = document.querySelectorAll('.content-video a');
-    videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
-    event.target.classList.add('active');
-    const videoToPlay = event.target.getAttribute('href');
-    iFrame.setAttribute('src', videoToPlay);
-}
+  const videoLinks = document.querySelectorAll('.content-video a');
+  videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
+  event.target.classList.add('active');
+  const videoToPlay = event.target.getAttribute('href');
+  iFrame.setAttribute('src', videoToPlay);
+};
 ```
 
 ## Refactoring Components
@@ -909,10 +927,18 @@ Create `components/video-article`
 
 ```html
 <div class="content-video">
-  <iframe src="https://player.vimeo.com/video/326317981" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+  <iframe
+    src="https://player.vimeo.com/video/326317981"
+    frameborder="0"
+    webkitAllowFullScreen
+    mozallowfullscreen
+    allowfullscreen
+  ></iframe>
   <ul class="btn-list">
     <li>
-      <a class="active" href="https://player.vimeo.com/video/326317981">Waves</a>
+      <a class="active" href="https://player.vimeo.com/video/326317981"
+        >Waves</a
+      >
     </li>
     <li>
       <a href="https://player.vimeo.com/video/323437908">Gauchos</a>
@@ -928,9 +954,18 @@ Create `components/video-aside`
 
 ```html
 <h2>Videos About People</h2>
-<p><strong>Waves</strong> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-<p><strong>Gauchos</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-<p><strong>True Love in Pueblo Textil</strong> Nine-year-old Maribel explains to us how it feels to be stricken with the world's oldest infliction: love.</p>
+<p>
+  <strong>Waves</strong> Ut enim ad minim veniam, quis nostrud exercitation
+  ullamco laboris nisi ut aliquip ex ea commodo consequat.
+</p>
+<p>
+  <strong>Gauchos</strong> Lorem ipsum dolor sit amet, consectetur adipisicing
+  elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+</p>
+<p>
+  <strong>True Love in Pueblo Textil</strong> Nine-year-old Maribel explains to
+  us how it feels to be stricken with the world's oldest infliction: love.
+</p>
 ```
 
 In `layout.html`, include the two new components using article and aside tags
@@ -950,7 +985,7 @@ Add to base.scss (wide screen only)
 
 ```css
 section {
-  @media(min-width: $break-med){
+  @media (min-width: $break-med) {
     max-width: $max-width;
     margin: 0 auto;
     display: grid;
@@ -968,8 +1003,8 @@ section {
 
 We want the video section to appear on only the home page and in the video page.
 
-* Save out two copies of `layout.html` as `layouts/home.html` and `layouts/video.html`
-* Use these templates for rendering e.g.:
+- Save out two copies of `layout.html` as `layouts/home.html` and `layouts/video.html`
+- Use these templates for rendering e.g.:
 
 `pages/home.md`
 
@@ -1034,12 +1069,12 @@ layout: layouts/layout.html
 ---
 
 <section id="videos">
-<article>
-{% include components/video-article.html %}
-</article>
-<aside>
-{% include components/video-aside.html %}
-</aside>
+  <article>
+    {% include components/video-article.html %}
+  </article>
+  <aside>
+    {% include components/video-aside.html %}
+  </aside>
 </section>
 ```
 
@@ -1048,13 +1083,12 @@ _NOTE_: our ajax file is overwriting the contents of our div and needs a touch u
 Target a div with a class of blog in the JS:
 
 ```js
-  if (document.querySelector('.content .blog')) {
-    document.querySelector('.content .blog').innerHTML = looped
-  }
+if (document.querySelector('.content .blog')) {
+  document.querySelector('.content .blog').innerHTML = looped;
+}
 ```
 
 And apply that class to the blog page file:
-
 
 ```html
 ---
@@ -1077,20 +1111,18 @@ layout: layouts/layout.html
 ---
 
 <section id="videos">
-<article>
-{% include components/video-article.html %}
-</article>
-<aside>
-{% include components/video-aside.html %}
-</aside>
+  <article>
+    {% include components/video-article.html %}
+  </article>
+  <aside>
+    {% include components/video-aside.html %}
+  </aside>
 </section>
 
 <div class="content">
+  <h1>{{ pageTitle }}</h1>
 
-    <h1>{{ pageTitle }}</h1>
-
-    {{ content }}
-    
+  {{ content }}
 </div>
 ```
 
@@ -1100,12 +1132,12 @@ New `video-section.html` in components:
 
 ```html
 <section id="videos">
-<article>
-{% include components/video-article.html %}
-</article>
-<aside>
-{% include components/video-aside.html %}
-</aside>
+  <article>
+    {% include components/video-article.html %}
+  </article>
+  <aside>
+    {% include components/video-aside.html %}
+  </aside>
 </section>
 ```
 
@@ -1119,11 +1151,9 @@ layout: layouts/layout.html
 {% include components/video-section.html %}
 
 <div class="content">
+  <h1>{{ pageTitle }}</h1>
 
-    <h1>{{ pageTitle }}</h1>
-
-    {{ content }}
-    
+  {{ content }}
 </div>
 ```
 
@@ -1134,9 +1164,7 @@ Then the `video.html` layout
 layout: layouts/layout.html
 ---
 
-{% include components/video-article.html %}
-
-{{ content }}
+{% include components/video-article.html %} {{ content }}
 ```
 
 ## Images Carousel
@@ -1172,23 +1200,23 @@ In a new `_carousel.scss`:
 
 ```css
 .secondary aside {
-	ul {
-		display: flex;
-		flex-wrap: wrap;
-		align-content: space-around;
-		li {
-			flex-basis: 28%;
-			margin: 2px;
-			padding: 4px;
-			background-color: #fff;
-			border: 1px solid $dk-yellow;
-			transition: all 0.2s linear;
-			&:hover {
-				transform: scale(1.1);
-				box-shadow: 1px 1px 1px rgba(0,0,0,0.4);
-			}
-		}
-	}
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+    li {
+      flex-basis: 28%;
+      margin: 2px;
+      padding: 4px;
+      background-color: #fff;
+      border: 1px solid $dk-yellow;
+      transition: all 0.2s linear;
+      &:hover {
+        transform: scale(1.1);
+        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+      }
+    }
+  }
 }
 ```
 
@@ -1204,20 +1232,20 @@ li img {
 	}
 ```
 
-### Content Slider 
+### Content Slider
 
 The large image on the images page
 
 ```css
 figure {
-	position: relative;
-	figcaption {
-		padding: 1rem;
-    background: rgba(0,0,0, 0.7);
+  position: relative;
+  figcaption {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.7);
     color: #fff;
-		position: absolute;
-		bottom: 0;
-	}
+    position: absolute;
+    bottom: 0;
+  }
 }
 ```
 
@@ -1227,7 +1255,7 @@ const carouselLinksArray = [...carouselLinks];
 const carousel = document.querySelector('figure img');
 
 carouselLinksArray.forEach(carouselLink =>
-  carouselLink.addEventListener('click', runCarousel),
+  carouselLink.addEventListener('click', runCarousel)
 );
 
 function runCarousel() {
@@ -1290,17 +1318,17 @@ navTitle: Blog
 ```
 
 ```js
-document.addEventListener('click', clickHandlers)
+document.addEventListener('click', clickHandlers);
 
 var nyt =
   'https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0';
 
-function clickHandlers(){
-  if (event.target.matches('#pull')){
+function clickHandlers() {
+  if (event.target.matches('#pull')) {
     document.querySelector('body').classList.toggle('show-nav');
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')){
+  if (event.target.matches('.content-video a')) {
     const iFrame = document.querySelector('iframe');
     const videoLinks = document.querySelectorAll('.content-video a');
     videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
@@ -1311,28 +1339,27 @@ function clickHandlers(){
   }
 }
 
-var addContent = function(data){
+var addContent = function(data) {
+  var looped = '';
 
-  var looped = ''
-
-  for(i=0; i<data.results.length; i++){
+  for (i = 0; i < data.results.length; i++) {
     looped += `
       <div class="item">
         <h3>${data.results[i].title}</h3>
         <p>${data.results[i].abstract}</p>
       </div>
-      `
+      `;
   }
-  if (document.querySelector('.content .blog')){
-    document.querySelector('.content .blog').innerHTML = looped
+  if (document.querySelector('.content .blog')) {
+    document.querySelector('.content .blog').innerHTML = looped;
   }
-}
+};
 
-var getData = function () {
-	fetch(nyt)
-  .then(response => response.json())
-  .then(json => addContent(json))
-}
+var getData = function() {
+  fetch(nyt)
+    .then(response => response.json())
+    .then(json => addContent(json));
+};
 
 getData();
 ```
