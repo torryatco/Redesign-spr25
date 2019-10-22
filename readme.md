@@ -21,12 +21,13 @@
     - [Updating the Video](#updating-the-video)
   - [Create Posts](#create-posts)
   - [Subtemplates](#subtemplates)
+  - [Note: fall2019 - continue on the video scripting above.](#note-fall2019---continue-on-the-video-scripting-above)
     - [Image Carousel](#image-carousel)
     - [Content Slider](#content-slider)
   - [Event Delegation](#event-delegation)
   - [Forms](#forms)
-    - [Form Elements](#form-elements)
     - [Form CSS](#form-css)
+    - [Form Elements](#form-elements)
     - [CSS for Material Design Form](#css-for-material-design-form)
   - [Content Management](#content-management)
   - [Notes](#notes)
@@ -776,8 +777,6 @@ function selectVideo() {
 }
 ```
 
-<!-- HERE -->
-
 Switch the active class:
 
 ```js
@@ -801,9 +800,11 @@ function removeActiveClass() {
 }
 ```
 
+<!-- HERE -->
+
 For performance reasons, you also should not loop over each element and attach an even listener to it.
 
-Use event delegation:
+Delete the video code and use event delegation:
 
 ```js
 function clickHandlers() {
@@ -823,7 +824,7 @@ function clickHandlers() {
 }
 ```
 
-Note: our clickHandlers function is getting out of hand. You could use a separate function to tame it a bit:
+Note: our clickHandlers function is getting out of hand. Let's use it to call separate functions:
 
 ```js
 function clickHandlers() {
@@ -868,9 +869,10 @@ section {
       }
     }
   }
-  aside p {
-    margin: 1rem 0;
-  }
+}
+
+p {
+  margin: 1rem 0;
 }
 ```
 
@@ -878,7 +880,7 @@ section {
 
 ## Create Posts
 
-Create a new posts folder.
+Create a new posts folder at the top level of the project.
 
 Create two posts.
 
@@ -896,6 +898,7 @@ postTitle: Services
 Stet nostro usu no, ius ex hinc nonumes nostrum. Id qui quodsi copiosae. In vis harum audire efficiantur, ea illum persecuti suscipiantur mei. Laboramus pertinacia eum id, id eos commune probatus menandri, mentitum apeirian mandamus cu mel. Hinc omnis tractatos eum in, veritus oporteat an vim, ius liber probatus no.
 
 Pro tota liber latine id. Ei mel temporibus ullamcorper. Ea pro novum ignota percipit, duo modus torquatos disputando cu, ius cu fastidii constituam voluptatibus. Eam an exerci labore impetus.
+
 ```
 
 2. `people.md`:
@@ -976,11 +979,12 @@ permalink: /
   {% endfor %}
 
 </section>
+
 ```
 
 ## Subtemplates
 
-In order to further customize the video teplate we will set up an special template partial in `_includes/layouts/video.html`:
+In order to further customize the video template we will set up a partial in `_includes/layouts/video.html`:
 
 ```
 ---
@@ -994,6 +998,8 @@ layout: layouts/layout.html
 {{ content }}
 
 ```
+
+## Note: fall2019 - continue on the video scripting above.
 
 In `pages/videos.md`
 
@@ -1014,7 +1020,7 @@ Insisting that they had taken every measure to keep the message “extra top sec
 
 ### Image Carousel
 
-Add and new layout file `images.html` to layouts
+Add and new layout file `images.html` to `_includes/layouts`:
 
 ```
 ---
@@ -1041,7 +1047,7 @@ date: 2019-02-01
 
 Do a DOM review of this section of the page.
 
-In a new `_carousel.scss`:
+In a new SASS partial `_carousel.scss`:
 
 ```css
 .secondary aside {
@@ -1086,7 +1092,7 @@ figure {
   position: relative;
   figcaption {
     padding: 1rem;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     color: #fff;
     position: absolute;
     bottom: 0;
@@ -1094,13 +1100,14 @@ figure {
 }
 ```
 
+Create a script that will change the main image when a thumbnail is clicked.
+
 ```js
 const carouselLinks = document.querySelectorAll('.image-tn a');
-const carouselLinksArray = [...carouselLinks];
 const carousel = document.querySelector('figure img');
 
-carouselLinksArray.forEach(carouselLink =>
-  carouselLink.addEventListener('click', runCarousel),
+carouselLinks.forEach(carouselLink =>
+  carouselLink.addEventListener('click', runCarousel)
 );
 
 function runCarousel() {
@@ -1110,7 +1117,7 @@ function runCarousel() {
 }
 ```
 
-Set the text in the carousel.
+Set the text in the figure caption.
 
 Find the appropriate traversal `const titleText = this.firstChild.title`:
 
@@ -1149,41 +1156,11 @@ function runCarousel() {
 
 Delete the scripts related to the carousel.
 
-<!-- Finally, use event delegation:
-
-```js
-function clickHandlers() {
-  if (event.target.matches('#pull')) {
-    showMenu();
-    event.preventDefault();
-  }
-  if (event.target.matches('.content-video a')) {
-    videoSwitch();
-    event.preventDefault();
-  }
-  if (event.target.closest('.image-tn a')) {
-    runCarousel();
-    event.preventDefault();
-  }
-}
-```
-
-```js
-function runCarousel() {
-  const carousel = document.querySelector('figure img');
-  const carouselPara = document.querySelector('figcaption');
-  const imageHref = event.target.parentNode.getAttribute('href');
-  const titleText = event.target.title;
-  carousel.setAttribute('src', imageHref);
-  carouselPara.innerHTML = titleText;
-  event.preventDefault();
-}
-``` -->
-
 Let's see what we are clicking on when we click on a thumbnail.
 
 ```js
 function clickHandlers() {
+  event.preventDefault(); // NEW
   console.log(event.target); //NEW
   if (event.target.matches('#pull')) {
     showMenu();
@@ -1202,7 +1179,6 @@ Block the default event on the click:
 
 ```js
 function clickHandlers() {
-  console.log(event.target); //NEW
   if (event.target.matches('#pull')) {
     showMenu();
     event.preventDefault();
@@ -1325,6 +1301,8 @@ Examine the HTML below:
 
 Let's get the form onto our page before we examine it.
 
+Create `_includes/components/contact.html` with the HTML above.
+
 Create a layout which includes the form, `layouts/contact.html`:
 
 ```yml
@@ -1338,7 +1316,7 @@ layout: layouts/layout.html
 {{ content }}
 ```
 
-Edit the content `contact.md`:
+Edit the content `contact.md` to use the new layout:
 
 ```yml
 ---
@@ -1351,44 +1329,6 @@ date: 2019-04-01
 
 Not certain if we'll ever get back to you but its worth a try.
 ```
-
-### Form Elements
-
-`<form>`:
-
-- action - specifies where to send the user when a form is submitted
-- autocomplete - specifies whether a form should have autocomplete on or off
-- method - specifies the HTTP method to use when sending form-data
-- name - specifies the name of a form
-- novalidate - turns validation off, typically used when you provide your own custom validations routines
-
-`<fieldset>`:
-
-- allows the form to be split into multiple sections (e.g. shipping, billing)
-- not really needed here
-
-`<label>`:
-
-- identifies the field's purpose to the user
-- the `for` attribute of the `<label>` tag should be the same as the id attribute of the related input to bind them together
-
-`<input>`:
-
-- specifies an input field where the user can enter data.
-- can accept autocomplete and autofocus
-- is empty (`/>`) and consists of attributes only
-
-`<input>` attributes:
-
-- `name` - Specifies the name of an `<input>` element used to reference form data after a form is submitted
-- `type` - the [most complex](https://www.w3schools.com/tags/att_input_type.asp) attribute, determines the nature of the input
-- `required` - works with native HTML5 validation
-- `placeholder` - the text the user sees before typing
-
-Additional input attributes we will be using:
-
-- `pattern` - uses a [regular expression](https://www.w3schools.com/TAGS/att_input_pattern.asp) that the `<input>` element's value is checked against on form submission
-- `title` - use with pattern to specify extra information about an element, not form specific, often shown as a tooltip text, here - describes the pattern to help the user
 
 ### Form CSS
 
@@ -1460,6 +1400,45 @@ textarea:focus:invalid {
 }
 ```
 
+### Form Elements
+
+`<form>`:
+
+- action - specifies where to send the user when a form is submitted
+- autocomplete - specifies whether a form should have autocomplete on or off
+- method - specifies the HTTP method to use when sending form-data
+- name - specifies the name of a form
+- novalidate - turns validation off, typically used when you provide your own custom validations routines
+
+`<fieldset>`:
+
+- allows the form to be split into multiple sections (e.g. shipping, billing)
+- not really needed here
+
+`<label>`:
+
+- identifies the field's purpose to the user
+- the `for` attribute of the `<label>` tag should be the same as the id attribute of the related input to bind them together
+- Clicking on a properly bound form selects its linked input
+
+`<input>`:
+
+- specifies an input field where the user can enter data.
+- can accept autocomplete and autofocus
+- is empty (`/>`) and consists of attributes only
+
+`<input>` attributes:
+
+- `name` - Specifies the name of an `<input>` element used to reference form data after a form is submitted
+- `type` - the [most complex](https://www.w3schools.com/tags/att_input_type.asp) attribute, determines the nature of the input
+- `required` - works with native HTML5 validation
+- `placeholder` - the text the user sees before typing
+
+Additional input attributes we will be using:
+
+- `pattern` - uses a [regular expression](https://www.w3schools.com/TAGS/att_input_pattern.asp) that the `<input>` element's value is checked against on form submission
+- `title` - use with pattern to specify extra information about an element, not form specific, often shown as a tooltip text, here - describes the pattern to help the user
+
 DELETE THE FORM FIELDS LEAVING ONLY THE BUTTON.
 
 Edit the first field:
@@ -1478,7 +1457,7 @@ Edit the first field:
 
 Note the tooltip and autocomplete action.
 
-Note that I have placed the labels after the inputs. Placing them before would be more common.
+Note that I have placed the labels after the inputs. Placing them before would be more common but we are going to style them.
 
 Edit the second field:
 
@@ -1635,7 +1614,7 @@ button {
 
 [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) - a back-end only content management system built from the ground up as a content repository that makes content accessible via a RESTful API for display on any device.
 
-[Netlify CMS](https://www.netlifycms.org/). Another choice might be [Forestry.io](Forestry.io)
+[Netlify CMS](https://www.netlifycms.org/). 
 
 Here's a [tutorial](https://css-tricks.com/jamstack-comments/) on CSS-Tricks.
 
