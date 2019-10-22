@@ -19,10 +19,11 @@
   - [Video Component](#video-component)
     - [Getting and Setting HTML Attributes](#getting-and-setting-html-attributes)
     - [Updating the Video](#updating-the-video)
-    - [Thinning the Templates](#thinning-the-templates)
-    - [Final trim](#final-trim)
+  - [Create Posts](#create-posts)
+  - [Subtemplates](#subtemplates)
     - [Image Carousel](#image-carousel)
     - [Content Slider](#content-slider)
+  - [Event Delegation](#event-delegation)
   - [Forms](#forms)
     - [Form Elements](#form-elements)
     - [Form CSS](#form-css)
@@ -775,6 +776,8 @@ function selectVideo() {
 }
 ```
 
+<!-- HERE -->
+
 Switch the active class:
 
 ```js
@@ -848,73 +851,7 @@ var videoSwitch = function() {
 };
 ```
 
-<!-- ## Refactoring Components
-
-Suppose we want to remove the video content from all pages except Home and Videos. We also want to add the video section to the video page without the aside.
-
-Split the video.html component into video-article.html and video-aside.html in the components folder.
-
-Create `components/video-article`
-
-```html
-<div class="content-video">
-  <iframe
-    src="https://player.vimeo.com/video/326317981"
-    frameborder="0"
-    webkitAllowFullScreen
-    mozallowfullscreen
-    allowfullscreen
-  ></iframe>
-  <ul class="btn-list">
-    <li>
-      <a class="active" href="https://player.vimeo.com/video/326317981"
-        >Waves</a
-      >
-    </li>
-    <li>
-      <a href="https://player.vimeo.com/video/323437908">Gauchos</a>
-    </li>
-    <li>
-      <a href="https://player.vimeo.com/video/315298268">Pueblo Textil</a>
-    </li>
-  </ul>
-</div>
-```
-
-Create `components/video-aside`
-
-```html
-<h2>Videos About People</h2>
-<p>
-  <strong>Waves</strong> Ut enim ad minim veniam, quis nostrud exercitation
-  ullamco laboris nisi ut aliquip ex ea commodo consequat.
-</p>
-<p>
-  <strong>Gauchos</strong> Lorem ipsum dolor sit amet, consectetur adipisicing
-  elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-</p>
-<p>
-  <strong>True Love in Pueblo Textil</strong> Nine-year-old Maribel explains to
-  us how it feels to be stricken with the world's oldest infliction: love.
-</p>
-```
-
-In `layout.html`, include the two new components using article and aside tags
-
-```html
-<section>
-  <article>
-    {% include components/video-article.html %}
-  </article>
-  <aside>
-    {% include components/video-aside.html %}
-  </aside>
-</section>
-```
-
--->
-
-Add to base.scss:
+To support a side-by-side layout on wide screens add the following to base.scss:
 
 ```css
 section {
@@ -937,50 +874,128 @@ section {
 }
 ```
 
-<!-- We want the video section to appear on only the home page and in the video page.
+<!-- HERE -->
 
-- Save out two copies of `layout.html` as `layouts/home.html` and `layouts/video.html`
-- Use these templates for rendering e.g.:
+## Create Posts
 
-`pages/home.md`
+Create a new posts folder.
 
-```yaml
+Create two posts.
+
+1. `services.md`:
+
+```md
 ---
-layout: layouts/home.html
-pageTitle: Home
+layout: layouts/layout.html
+date: 2010-01-01
+postTitle: Services
+---
+
+# Our Services
+
+Stet nostro usu no, ius ex hinc nonumes nostrum. Id qui quodsi copiosae. In vis harum audire efficiantur, ea illum persecuti suscipiantur mei. Laboramus pertinacia eum id, id eos commune probatus menandri, mentitum apeirian mandamus cu mel. Hinc omnis tractatos eum in, veritus oporteat an vim, ius liber probatus no.
+
+Pro tota liber latine id. Ei mel temporibus ullamcorper. Ea pro novum ignota percipit, duo modus torquatos disputando cu, ius cu fastidii constituam voluptatibus. Eam an exerci labore impetus.
+```
+
+2. `people.md`:
+
+```md
+---
+layout: layouts/layout.html
+date: 2010-01-01
+postTitle: People
+---
+
+# People
+
+Lorem ipsum dolor sit amet, ut per facer evertitur. Graeco indoctum comprehensam et his, eripuit platonem vituperata nam id. Duo purto fuisset at, augue summo luptatum eam ut, pro at feugait invenire necessitatibus. Malorum volutpat ut vis, sed an semper dicunt aliquam. Id vel nullam tincidunt.
+
+Cibo putent scriptorem ne vis. Ea adhuc tincidunt sit, an enim albucius omittantur sit, ut minim prompta quo. Eu mel paulo utroque ullamcorper, et has nisl wisi debitis. Qui an munere populo facilis, ut usu cibo mediocrem. Te ocurreret interpretaris eum.
+```
+
+Create `posts.json`:
+
+```js
+{
+  "layout": "layouts/layout.html",
+  "tags": ["posts"]
+}
+
+```
+
+Use the content on the home page.
+
+`home.md`:
+
+```md
+---
+layout: layouts/layout.html
+pageTitle: Welcome
+tags:
+  - nav
 navTitle: Home
 date: 2010-01-01
 permalink: /
 ---
 
-{% for page in collections.pages %}
-  <h2><a href="{{ page.url }}">{{ page.data.pageTitle | upcase }}</a></h2>
-  <em>{{ page.date | date: "%Y-%m-%d" }}</em>
-{% endfor %}
+<section>
+  
+  {% for post in collections.posts %}
+  <article>
+  {{ post.templateContent }}
+  {{ post.date | date: "%Y-%m-%d" }}
+  </article>
+  {% endfor %}
+  
+</section>
 ```
 
-and `pages/videos.md`
+If you wish you can create a series of links to the posts:
 
-```yaml
+In `pages/home.md`:
+
+```md
 ---
-layout: layouts/video.html
-pageTitle: Videos
-navTitle: Videos
-date: 2019-01-01
+layout: layouts/layout.html
+pageTitle: Welcome
+tags: nav
+navTitle: Home
+date: 2010-01-01
+permalink: /
 ---
 
-## Coming soon.
+<section>
 
-[Home](/)
+{% for post in collections.posts %}
+
+  <article>
+  <h2><a href="{{ post.url }}">{{ post.data.postTitle | upcase }}</a></h2>
+  <p>{{ post.date | date: "%Y-%m-%d" }}<p>
+  </article>
+  {% endfor %}
+
+</section>
 ```
 
-Now `home.md` and `videos.md` are using the new layouts (layouts vs components).
+## Subtemplates
 
-Remove the article section from `layout.html` so it doesn't render on all pages.
+In order to further customize the video teplate we will set up an special template partial in `_includes/layouts/video.html`:
 
-### Thinning the Templates
+```
+---
+layout: layouts/layout.html
+---
 
-The `videos.md` markdown file:
+<section>
+  {% include components/video.html %}
+</section>
+
+{{ content }}
+
+```
+
+In `pages/videos.md`
 
 ```md
 ---
@@ -990,118 +1005,12 @@ navTitle: Videos
 date: 2019-01-01
 ---
 
-Insisting that they had taken every measure to keep the message “extra top secret,” the Trump boys reportedly spent Wednesday defending their decision to send Saudi Arabia plans for a cool missile using their personal Etch A Sketch. “We spent, like, a million hours making that rocket look super good, so we had to send it to our friends in Sunny Arabia…
+Insisting that they had taken every measure to keep the message “extra top secret,” the Trump boys reportedly spent Wednesday defending their decision to send Saudi Arabia plans for a cool missile using their personal Etch A Sketch. “We spent, like, a million hours making that rocket look super good, so we had to send it to our friends in Sunny Arabia."
 
 [Home](/)
 ```
 
-There is a lot of duplication going on. Let's pass the `video.html` template into `layout.html` for processing.
-
-The `video.html` template:
-
-```html
----
-layout: layouts/layout.html
----
-
-<section id="videos">
-  <article>
-    {% include components/video-article.html %}
-  </article>
-  <aside>
-    {% include components/video-aside.html %}
-  </aside>
-</section>
-```
-
-_NOTE_: our ajax file is overwriting the contents of our div and needs a touch up.
-
-Target a div with a class of blog in the JS:
-
-```js
-if (document.querySelector('.content .blog')) {
-  document.querySelector('.content .blog').innerHTML = looped;
-}
-```
-
-And apply that class to the blog page file:
-
-```html
----
-pageClass: blog
-pageTitle: Blog
-date: 2019-03-01
-navTitle: Blog
----
-
-<div class="blog"></div>
-```
-
-Perform the same thinning process for the `home.html` template.
-
-Trim the `home.html` template
-
-```html
----
-layout: layouts/layout.html
----
-
-<section id="videos">
-  <article>
-    {% include components/video-article.html %}
-  </article>
-  <aside>
-    {% include components/video-aside.html %}
-  </aside>
-</section>
-
-<div class="content">
-  <h1>{{ pageTitle }}</h1>
-
-  {{ content }}
-</div>
-```
-
-### Final trim
-
-New `video-section.html` in components:
-
-```html
-<section id="videos">
-  <article>
-    {% include components/video-article.html %}
-  </article>
-  <aside>
-    {% include components/video-aside.html %}
-  </aside>
-</section>
-```
-
-Then in the `home.html` layout
-
-```html
----
-layout: layouts/layout.html
----
-
-{% include components/video-section.html %}
-
-<div class="content">
-  <h1>{{ pageTitle }}</h1>
-
-  {{ content }}
-</div>
-```
-
-Then the `video.html` layout
-
-```html
----
-layout: layouts/layout.html
----
-
-{% include components/video-article.html %} {{ content }}
-``` -->
+<!-- HERE -->
 
 ### Image Carousel
 
@@ -1156,7 +1065,7 @@ In a new `_carousel.scss`:
 }
 ```
 
-Note transition:
+Note the transition:
 
 ```css
 li img {
@@ -1236,7 +1145,11 @@ function runCarousel() {
 }
 ```
 
-Finally, use event delegation:
+## Event Delegation
+
+Delete the scripts related to the carousel.
+
+<!-- Finally, use event delegation:
 
 ```js
 function clickHandlers() {
@@ -1256,8 +1169,6 @@ function clickHandlers() {
 ```
 
 ```js
-// images
-
 function runCarousel() {
   const carousel = document.querySelector('figure img');
   const carouselPara = document.querySelector('figcaption');
@@ -1267,50 +1178,21 @@ function runCarousel() {
   carouselPara.innerHTML = titleText;
   event.preventDefault();
 }
-
-// end images
-```
-
-ADDED
-
-Here is the script from the image viewer page:
-
-```js
-const carouselLinks = document.querySelectorAll('.image-tn a');
-const carousel = document.querySelector('figure img');
-const carouselPara = document.querySelector('figcaption');
-
-carouselLinks.forEach(carouselLink =>
-  carouselLink.addEventListener('click', runCarousel),
-);
-
-function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute('href');
-  const titleText = event.target.title;
-  carousel.setAttribute('src', imageHref);
-  carouselPara.innerHTML = titleText;
-  event.preventDefault();
-}
-```
-
-We will refactor it to use event delegation.
-
-First - comment out the script above.
+``` -->
 
 Let's see what we are clicking on when we click on a thumbnail.
 
 ```js
 function clickHandlers() {
-  console.log(event.target);
+  console.log(event.target); //NEW
   if (event.target.matches('#pull')) {
-    document.querySelector('body').classList.toggle('show-nav');
+    showMenu();
     event.preventDefault();
   }
   if (event.target.matches('.content-video a')) {
     videoSwitch();
     event.preventDefault();
   }
-  event.preventDefault();
 }
 ```
 
@@ -1320,14 +1202,16 @@ Block the default event on the click:
 
 ```js
 function clickHandlers() {
+  console.log(event.target); //NEW
   if (event.target.matches('#pull')) {
-    document.querySelector('body').classList.toggle('show-nav');
+    showMenu();
     event.preventDefault();
   }
   if (event.target.matches('.content-video a')) {
     videoSwitch();
     event.preventDefault();
-  } else if (event.target.matches('.image-tn img')) {
+  }
+  if (event.target.matches('.image-tn img')) {
     event.preventDefault();
   }
 }
@@ -1342,11 +1226,11 @@ function runCarousel() {
 }
 ```
 
-and a call to that function
+and a call to that function in `clickHandlers`:
 
 ```js
-else if (event.target.matches('.image-tn img')) {
-  runCarousel()
+if (event.target.matches('.image-tn img')) {
+  runCarousel();
   event.preventDefault();
 }
 ```
@@ -1374,11 +1258,11 @@ function runCarousel() {
 }
 ```
 
-Compare the commented out function. Note how simpler and maintainable the event delegation sysstem is.
+Compare the commented out function. Note how simpler and maintainable delegation is.
 
 ## Forms
 
-Use the following in the `contact.html` component:
+Examine the HTML below:
 
 ```html
 <form name="contact" method="POST" action="/" autocomplete="true">
@@ -1450,6 +1334,8 @@ layout: layouts/layout.html
 <article>
 {% include components/contact.html %}
 </article>
+
+{{ content }}
 ```
 
 Edit the content `contact.md`:
@@ -1465,10 +1351,6 @@ date: 2019-04-01
 
 Not certain if we'll ever get back to you but its worth a try.
 ```
-
-Add a content block to the template:
-
-`{{ content }}`
 
 ### Form Elements
 
