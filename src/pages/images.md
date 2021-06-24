@@ -9,7 +9,7 @@ images:
 ---
 
 {% for filename in images %}
-<img src="/static/img/{{ filename }}" alt="A nice picture of apples." srcset="">
+<img src="/img/{{ filename }}" alt="A nice picture of apples." srcset="">
 {% endfor %}
 
 [Home](/)
