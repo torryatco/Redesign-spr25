@@ -1,27 +1,36 @@
-var nytAPI =
-  "https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
+// document.addEventListener("click", clickHandlers);
 
-function addContent(data) {
-  var looped = "";
-  for (i = 0; i < data.results.length; i++) {
-    looped += `
-      <div class="item">
-        <h3>${data.results[i].title}</h3>
-        <p>${data.results[i].abstract}</p>
-      </div>
-      `;
-  }
-  document.querySelector(".content").innerHTML = looped;
-}
+// store the link plus the API key in a variable
+const key = "uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
+const API = `https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=${key}`;
 
-function getData() {
-  fetch(nytAPI)
+console.log(API);
+
+function getStories(event) {
+  fetch(API)
     .then((response) => response.json())
-    .then((json) => addContent(json));
+    .then((data) => showData(data.results));
 }
 
-getData();
+function showData(stories) {
+  var looped = stories
+    .map(
+      (story) => `
+    <div class="item">
+    <picture>
+    <img src="${story.multimedia[2].url}" alt="" />
+    <caption>${story.multimedia[2]?.caption}</caption>
+    </picture>
+      <h3><a href="${story.url}">${story.title}</a></h3>
+      <p>${story.abstract}</p>
+    </div>
+  `
+    )
+    .join("");
 
-// if (document.querySelector('.blog')) {
-//   getData();
-// }
+  document.querySelector(".stories").innerHTML = looped;
+}
+
+if (document.querySelector(".home")) {
+  getStories();
+}

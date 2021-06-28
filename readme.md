@@ -59,31 +59,15 @@ Our hypothetical company has a site the looks outdated, is not responsive and ne
 
 ![site](ignore/other/wide.png)
 
-We will be using many of the files and techniques we looked at last week. Before beginning, examine the changes.
+We will be using many of the files and techniques we looked at last week. Before beginning, examine the files.
 
-- .gitignore - now includes the `_site` directory
-- pages - instead of posts we now have a pages collection
-- components - inside the `_includes` directory - breaking down a site into smaller parts is a key skill
-- layouts - our `layout.html` file now references the components above via `include`
-- .eleventyignore - instructs 11ty to not process `readme.md` (this file - for abvious reasons) and anything in the ignore directory (for convenience)
-- static directory - reorganized assets
-- .eleventy.js - passthroughs for images, JS and CSS in the static directory
-- scripts.js - removed dependency on pressing a button and call the function directly (produces an error in the console on every page except Blog)
-- `home.md` uses a permalink (`/`) in the front matter which means it will not render to its own directory in the \_site folder but will instead render to the top level (i.e. it becomes our main `index.html`)
-
-I have renamed the pages:
-
-- the ajax page is now called Blog
-- `pages/blog.html` is the only page that uses a `pageClass: blog` property (which, in turn, works with the template's `<body class="{{ pageClass }}">`)
-- there is a new videos page
-- the `pages.json` file (formerly `posts.json`) now tags all files in the pages folder as follows:
-
-```js
-{
-	"layout": "layouts/layout.html",
-	"tags": ["pages", "nav"]
-}
-```
+- `.gitignore` - includes the `dist` directory
+- `pages` - our base directory
+- `layouts` - our `layout.html` file now references components via `include`
+- `.eleventyignore` - instructs 11ty to not process `readme.md` (this file - for obvious reasons) and anything in the ignore directory
+- `.eleventy.js` - passthroughs for images and JS
+- `scripts.js` - removed dependency on pressing a button and call the function directly
+- `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `_site` folder but will instead render to the top level (i.e. it becomes `index.html`)
 
 ## GIT
 
@@ -108,7 +92,7 @@ Create a new Github repo and add the remote origin to the repo following the ins
 
 ```sh
 $ git add <your repo name as per the instructions on Github>
-$ git push -u origin master
+$ git push -u origin main
 ```
 
 ## Deployment
@@ -133,20 +117,6 @@ $ git add .
 $ git commit -m 'commit message'
 $ git checkout master
 $ git push -u origin master
-```
-
-## Setup and Navigation
-
-There is an erro in the console on every page due to the script that bring in content from the New York Times.
-
-We can correct it by making the execution dependant on the pageClass:
-
-```js
-// getData();
-
-if (document.querySelector('.blog')) {
-  getData();
-}
 ```
 
 Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
@@ -216,9 +186,9 @@ Stop (`ctrl-c`) and restart (`npm start`) the processes.
 Call the sass partial from `styles.scss`
 
 ```css
-@import 'imports/normalize';
-@import 'imports/main';
-@import 'imports/base';
+@import "imports/normalize";
+@import "imports/main";
+@import "imports/base";
 ```
 
 ### Aside: Using Live SASS Compiler in VS Code
@@ -419,7 +389,7 @@ Small screen first - show and format the hamburger menu:
 }
 
 #pull::after {
-  content: '';
+  content: "";
   background: url(../img/nav-icon.png) no-repeat;
   width: 22px;
   height: 22px;
@@ -466,13 +436,13 @@ nav .active a {
 Add to the top of `static/js/scripts`:
 
 ```js
-var hamburger = document.querySelector('#pull');
-var body = document.querySelector('body');
+var hamburger = document.querySelector("#pull");
+var body = document.querySelector("body");
 
-hamburger.addEventListener('click', showMenu);
+hamburger.addEventListener("click", showMenu);
 
 function showMenu() {
-  body.classList.toggle('show-nav');
+  body.classList.toggle("show-nav");
   event.preventDefault();
 }
 ```
@@ -482,8 +452,8 @@ or, using event delegation:
 ```js
 function clickHandlers() {
   console.log(event.target);
-  if (event.target.matches('#pull')) {
-    document.querySelector('body').classList.toggle('show-nav');
+  if (event.target.matches("#pull")) {
+    document.querySelector("body").classList.toggle("show-nav");
     event.preventDefault();
   }
   // event.preventDefault();
@@ -570,7 +540,7 @@ Here is the final `_nav.scss`:
 }
 
 #pull::after {
-  content: '';
+  content: "";
   background: url(../img/nav-icon.png) no-repeat;
   width: 22px;
   height: 22px;
@@ -635,9 +605,7 @@ Note: if we were using React or Angular or Vue to make a single page app (SPA) w
 Add the component to `videos.md`
 
 ```html
-<section>
-  {% include components/video.html %}
-</section>
+<section>{% include components/video.html %}</section>
 ```
 
 Examine the component's HTML.
@@ -687,13 +655,13 @@ Clicking the buttons should reveal a different video.
 Create variables and a function:
 
 ```js
-const videoLinks = document.querySelectorAll('.content-video a');
+const videoLinks = document.querySelectorAll(".content-video a");
 
-videoLinks.forEach(videoLink =>
-  videoLink.addEventListener('click', function() {
+videoLinks.forEach((videoLink) =>
+  videoLink.addEventListener("click", function () {
     console.log(event.target);
     event.preventDefault();
-  }),
+  })
 );
 ```
 
@@ -702,9 +670,9 @@ Examine the `videoLinks` nodelist in the console.
 Add a `selectVideo` function:
 
 ```js
-const videoLinks = document.querySelectorAll('.content-video a');
-videoLinks.forEach(videoLink =>
-  videoLink.addEventListener('click', selectVideo),
+const videoLinks = document.querySelectorAll(".content-video a");
+videoLinks.forEach((videoLink) =>
+  videoLink.addEventListener("click", selectVideo)
 );
 
 // for (let i = 0; i < videoLinks.length; i++){
@@ -738,14 +706,14 @@ For maximum compatibility use `Array.from()`:
 Isolate the `href` value using `getAttribute`:
 
 ```js
-const videoLinks = Array.from(document.querySelectorAll('.content-video a'));
+const videoLinks = Array.from(document.querySelectorAll(".content-video a"));
 
-videoLinks.forEach(videoLink =>
-  videoLink.addEventListener('click', selectVideo),
+videoLinks.forEach((videoLink) =>
+  videoLink.addEventListener("click", selectVideo)
 );
 
 function selectVideo() {
-  const videoToPlay = event.target.getAttribute('href');
+  const videoToPlay = event.target.getAttribute("href");
   console.log(videoToPlay);
   event.preventDefault();
 }
@@ -762,16 +730,16 @@ and set its src attribute:
 `iFrame.setAttribute('src', videoToPlay)`:
 
 ```js
-const iFrame = document.querySelector('iframe'); // NEW
-const videoLinks = document.querySelectorAll('.content-video a');
+const iFrame = document.querySelector("iframe"); // NEW
+const videoLinks = document.querySelectorAll(".content-video a");
 
-videoLinks.forEach(videoLink =>
-  videoLink.addEventListener('click', selectVideo),
+videoLinks.forEach((videoLink) =>
+  videoLink.addEventListener("click", selectVideo)
 );
 
 function selectVideo() {
-  const videoToPlay = event.target.getAttribute('href');
-  iFrame.setAttribute('src', videoToPlay); // NEW
+  const videoToPlay = event.target.getAttribute("href");
+  iFrame.setAttribute("src", videoToPlay); // NEW
   console.log(iFrame); // NEW
   event.preventDefault();
 }
@@ -780,23 +748,23 @@ function selectVideo() {
 Switch the active class:
 
 ```js
-const iFrame = document.querySelector('iframe');
-const videoLinks = document.querySelectorAll('.content-video a');
-videoLinks.forEach(videoLink =>
-  videoLink.addEventListener('click', selectVideo),
+const iFrame = document.querySelector("iframe");
+const videoLinks = document.querySelectorAll(".content-video a");
+videoLinks.forEach((videoLink) =>
+  videoLink.addEventListener("click", selectVideo)
 );
 
 function selectVideo() {
   removeActiveClass(); // NEW
-  this.classList.add('active'); // NEW
-  const videoToPlay = event.target.getAttribute('href');
-  iFrame.setAttribute('src', videoToPlay);
+  this.classList.add("active"); // NEW
+  const videoToPlay = event.target.getAttribute("href");
+  iFrame.setAttribute("src", videoToPlay);
   event.preventDefault();
 }
 
 // NEW
 function removeActiveClass() {
-  videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
+  videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
 }
 ```
 
@@ -808,17 +776,17 @@ Delete the video code and use event delegation:
 
 ```js
 function clickHandlers() {
-  if (event.target.matches('#pull')) {
-    document.querySelector('body').classList.toggle('show-nav');
+  if (event.target.matches("#pull")) {
+    document.querySelector("body").classList.toggle("show-nav");
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')) {
-    const iFrame = document.querySelector('iframe');
-    const videoLinks = document.querySelectorAll('.content-video a');
-    videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
-    event.target.classList.add('active');
-    const videoToPlay = event.target.getAttribute('href');
-    iFrame.setAttribute('src', videoToPlay);
+  if (event.target.matches(".content-video a")) {
+    const iFrame = document.querySelector("iframe");
+    const videoLinks = document.querySelectorAll(".content-video a");
+    videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
+    event.target.classList.add("active");
+    const videoToPlay = event.target.getAttribute("href");
+    iFrame.setAttribute("src", videoToPlay);
     event.preventDefault();
   }
 }
@@ -828,27 +796,27 @@ Note: our clickHandlers function is getting out of hand. Let's use it to call se
 
 ```js
 function clickHandlers() {
-  if (event.target.matches('#pull')) {
+  if (event.target.matches("#pull")) {
     showMenu();
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')) {
+  if (event.target.matches(".content-video a")) {
     videoSwitch();
     event.preventDefault();
   }
 }
 
-var showMenu = function() {
-  document.querySelector('body').classList.toggle('show-nav');
+var showMenu = function () {
+  document.querySelector("body").classList.toggle("show-nav");
 };
 
-var videoSwitch = function() {
-  const iFrame = document.querySelector('iframe');
-  const videoLinks = document.querySelectorAll('.content-video a');
-  videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
-  event.target.classList.add('active');
-  const videoToPlay = event.target.getAttribute('href');
-  iFrame.setAttribute('src', videoToPlay);
+var videoSwitch = function () {
+  const iFrame = document.querySelector("iframe");
+  const videoLinks = document.querySelectorAll(".content-video a");
+  videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
+  event.target.classList.add("active");
+  const videoToPlay = event.target.getAttribute("href");
+  iFrame.setAttribute("src", videoToPlay);
 };
 ```
 
@@ -898,7 +866,6 @@ postTitle: Services
 Stet nostro usu no, ius ex hinc nonumes nostrum. Id qui quodsi copiosae. In vis harum audire efficiantur, ea illum persecuti suscipiantur mei. Laboramus pertinacia eum id, id eos commune probatus menandri, mentitum apeirian mandamus cu mel. Hinc omnis tractatos eum in, veritus oporteat an vim, ius liber probatus no.
 
 Pro tota liber latine id. Ei mel temporibus ullamcorper. Ea pro novum ignota percipit, duo modus torquatos disputando cu, ius cu fastidii constituam voluptatibus. Eam an exerci labore impetus.
-
 ```
 
 2. `people.md`:
@@ -979,7 +946,6 @@ permalink: /
   {% endfor %}
 
 </section>
-
 ```
 
 ## Subtemplates
@@ -1103,16 +1069,16 @@ figure {
 Create a script that will change the main image when a thumbnail is clicked.
 
 ```js
-const carouselLinks = document.querySelectorAll('.image-tn a');
-const carousel = document.querySelector('figure img');
+const carouselLinks = document.querySelectorAll(".image-tn a");
+const carousel = document.querySelector("figure img");
 
-carouselLinks.forEach(carouselLink =>
-  carouselLink.addEventListener('click', runCarousel)
+carouselLinks.forEach((carouselLink) =>
+  carouselLink.addEventListener("click", runCarousel)
 );
 
 function runCarousel() {
-  const imageHref = this.getAttribute('href');
-  carousel.setAttribute('src', imageHref);
+  const imageHref = this.getAttribute("href");
+  carousel.setAttribute("src", imageHref);
   event.preventDefault();
 }
 ```
@@ -1123,11 +1089,11 @@ Find the appropriate traversal `const titleText = this.firstChild.title`:
 
 ```js
 function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute('href');
+  const imageHref = event.target.parentNode.getAttribute("href");
   console.log(imageHref);
   const titleText = event.target.title;
   console.log(titleText);
-  carousel.setAttribute('src', imageHref);
+  carousel.setAttribute("src", imageHref);
   event.preventDefault();
 }
 ```
@@ -1135,18 +1101,18 @@ function runCarousel() {
 Create a pointer to the figcaption in order to manipulate its content:
 
 ```js
-const carouselPara = document.querySelector('figcaption');
+const carouselPara = document.querySelector("figcaption");
 ```
 
 Set the innerHTML `carouselPara.innerHTML = titleText` of the paragraph:
 
 ```js
 function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute('href');
+  const imageHref = event.target.parentNode.getAttribute("href");
   console.log(imageHref);
   const titleText = event.target.title;
   console.log(titleText);
-  carousel.setAttribute('src', imageHref);
+  carousel.setAttribute("src", imageHref);
   carouselPara.innerHTML = titleText;
   event.preventDefault();
 }
@@ -1162,11 +1128,11 @@ Let's see what we are clicking on when we click on a thumbnail.
 function clickHandlers() {
   event.preventDefault(); // NEW
   console.log(event.target); //NEW
-  if (event.target.matches('#pull')) {
+  if (event.target.matches("#pull")) {
     showMenu();
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')) {
+  if (event.target.matches(".content-video a")) {
     videoSwitch();
     event.preventDefault();
   }
@@ -1179,15 +1145,15 @@ Block the default event on the click:
 
 ```js
 function clickHandlers() {
-  if (event.target.matches('#pull')) {
+  if (event.target.matches("#pull")) {
     showMenu();
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')) {
+  if (event.target.matches(".content-video a")) {
     videoSwitch();
     event.preventDefault();
   }
-  if (event.target.matches('.image-tn img')) {
+  if (event.target.matches(".image-tn img")) {
     event.preventDefault();
   }
 }
@@ -1197,7 +1163,7 @@ Add a function:
 
 ```js
 function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute('href');
+  const imageHref = event.target.parentNode.getAttribute("href");
   console.log(imageHref);
 }
 ```
@@ -1205,7 +1171,7 @@ function runCarousel() {
 and a call to that function in `clickHandlers`:
 
 ```js
-if (event.target.matches('.image-tn img')) {
+if (event.target.matches(".image-tn img")) {
   runCarousel();
   event.preventDefault();
 }
@@ -1217,7 +1183,7 @@ Capture the title text:
 
 ```js
 function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute('href');
+  const imageHref = event.target.parentNode.getAttribute("href");
   const titleText = event.target.title;
   console.log(titleText);
 }
@@ -1227,10 +1193,10 @@ Finallly, use those two variables to set the large image and caption:
 
 ```js
 function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute('href');
+  const imageHref = event.target.parentNode.getAttribute("href");
   const titleText = event.target.title;
-  document.querySelector('figure img').setAttribute('src', imageHref);
-  document.querySelector('figcaption').innerHTML = titleText;
+  document.querySelector("figure img").setAttribute("src", imageHref);
+  document.querySelector("figcaption").innerHTML = titleText;
 }
 ```
 
@@ -1614,7 +1580,7 @@ button {
 
 [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) - a back-end only content management system built from the ground up as a content repository that makes content accessible via a RESTful API for display on any device.
 
-[Netlify CMS](https://www.netlifycms.org/). 
+[Netlify CMS](https://www.netlifycms.org/).
 
 Here's a [tutorial](https://css-tricks.com/jamstack-comments/) on CSS-Tricks.
 
@@ -1641,29 +1607,29 @@ navTitle: Blog
 ```
 
 ```js
-document.addEventListener('click', clickHandlers);
+document.addEventListener("click", clickHandlers);
 
 var nyt =
-  'https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0';
+  "https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
 
 function clickHandlers() {
-  if (event.target.matches('#pull')) {
-    document.querySelector('body').classList.toggle('show-nav');
+  if (event.target.matches("#pull")) {
+    document.querySelector("body").classList.toggle("show-nav");
     event.preventDefault();
   }
-  if (event.target.matches('.content-video a')) {
-    const iFrame = document.querySelector('iframe');
-    const videoLinks = document.querySelectorAll('.content-video a');
-    videoLinks.forEach(videoLink => videoLink.classList.remove('active'));
-    event.target.classList.add('active');
-    const videoToPlay = event.target.getAttribute('href');
-    iFrame.setAttribute('src', videoToPlay);
+  if (event.target.matches(".content-video a")) {
+    const iFrame = document.querySelector("iframe");
+    const videoLinks = document.querySelectorAll(".content-video a");
+    videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
+    event.target.classList.add("active");
+    const videoToPlay = event.target.getAttribute("href");
+    iFrame.setAttribute("src", videoToPlay);
     event.preventDefault();
   }
 }
 
-var addContent = function(data) {
-  var looped = '';
+var addContent = function (data) {
+  var looped = "";
 
   for (i = 0; i < data.results.length; i++) {
     looped += `
@@ -1673,15 +1639,15 @@ var addContent = function(data) {
       </div>
       `;
   }
-  if (document.querySelector('.content .blog')) {
-    document.querySelector('.content .blog').innerHTML = looped;
+  if (document.querySelector(".content .blog")) {
+    document.querySelector(".content .blog").innerHTML = looped;
   }
 };
 
-var getData = function() {
+var getData = function () {
   fetch(nyt)
-    .then(response => response.json())
-    .then(json => addContent(json));
+    .then((response) => response.json())
+    .then((json) => addContent(json));
 };
 
 getData();
