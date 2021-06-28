@@ -67,7 +67,7 @@ We will be using many of the files and techniques we looked at last week. Before
 - `.eleventyignore` - instructs 11ty to not process `readme.md` (this file - for obvious reasons) and anything in the ignore directory
 - `.eleventy.js` - passthroughs for images and JS
 - `scripts.js` - removed dependency on pressing a button and call the function directly
-- `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `_site` folder but will instead render to the top level (i.e. it becomes `index.html`)
+- `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `_site` folder but will instead render to the top level (i.e. it becomes `index.html`). Therefore `<li><a href="/">Home</a></li>` has been removed from the navigation as it is no longer necessary.
 
 ## GIT
 

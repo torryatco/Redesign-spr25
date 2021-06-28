@@ -1,10 +1,9 @@
 <nav>
-  <a href="#" id="pull"></a>
   <ul>
-    {% for nav in collections.nav %}
+    {% for page in collections.page %}
     <li>
-      <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
+      <a href="{{ page.url }}"> {{ page.data.navTitle }} </a>
     </li>
-    {%- endfor -%}
+    {% endfor %}
   </ul>
 </nav>
