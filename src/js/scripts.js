@@ -1,12 +1,10 @@
-// document.addEventListener("click", clickHandlers);
-
 // store the link plus the API key in a variable
 const key = "uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
 const API = `https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=${key}`;
 
 console.log(API);
 
-function getStories(event) {
+function getStories() {
   fetch(API)
     .then((response) => response.json())
     .then((data) => showData(data.results));

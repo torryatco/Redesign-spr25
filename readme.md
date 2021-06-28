@@ -119,6 +119,86 @@ $ git checkout master
 $ git push -u origin master
 ```
 
+## LocalStorage and SessionStorage
+
+The localStorage and sessionStorage APIs let you store data locally in the browser. You can use the local storage API to store data locally that the browser can access later.
+
+Data is stored indefinitely, and must be a string.
+
+```js
+// Store data
+var someData = "The data that I want to store for later.";
+localStorage.setItem("myDataKey", someData);
+
+// Get data
+var data = localStorage.getItem("myDataKey");
+
+// Remove data
+localStorage.removeItem("myDatakey");
+```
+
+Session storage works just like localStorage, except the data is cleared when the browser session ends.
+
+```js
+// Store data
+var someTempData = "The data that I want to store temporarily.";
+sessionStorage.setItem("myTempDataKey", someTempData);
+
+// Get data
+var tempData = sessionStorage.getItem("myTempDataKey");
+
+// Remove data
+sessionStorage.removeItem("myTempDatakey");
+```
+
+Browsers provide differing levels of storage space for localStorage and sessionStorage, ranging from as little as 2mb up to unlimited.
+
+Accordingly, you should try to reduce the overall footprint of your data as much as possible.
+
+We begin by creating a key for our nytimes data and then checking for the data in local storage. If it exists then we'll use that data. Otherwise we'll fetch the data from the nytimes api:
+
+```js
+const storagePrefix = "nyt-autosave";
+...
+
+if (document.querySelector(".home")) {
+  var saved = localStorage.getItem(storagePrefix);
+  if (saved) {
+    console.log("loading from local storage");
+    document.querySelector(".stories").innerHTML = saved;
+  } else {
+    console.log("fetching from nytimes");
+    getStories();
+  }
+}
+```
+
+## Expiring localStorage Data
+
+Unlike cookies, localStorage does not have a native method for expiring data. It’s kept in storage until you or the user explicitly delete it.
+
+Save your data as an object with two keys:
+
+- The data key holds the data itself.
+- The timestamp key is the date your data was saved on. We can compare it to the current date, and fetch new data or delete it after a certain period of time.
+
+reate an object with your two keys. Set the data key as your data, and use new Date().getTime() for the timestamp key. This creates a UTC timestamp of the current time.
+
+Then, stringify your object and save it to localStorage.
+
+```js
+// Setup the localStorage data
+var data = {
+  data: data,
+  timestamp: new Date().getTime(),
+};
+
+// Save to localStorage
+localStorage.setItem("myData", JSON.stringify(data));
+```
+
+## Active Class for the Navigation
+
 Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
 
 ```html
