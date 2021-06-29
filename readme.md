@@ -888,7 +888,6 @@ Create `posts.json`:
   "layout": "layouts/layout.html",
   "tags": ["posts"]
 }
-
 ```
 
 Use the content on the blog page.
