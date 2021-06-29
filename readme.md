@@ -153,9 +153,7 @@ var tempData = sessionStorage.getItem("myTempDataKey");
 sessionStorage.removeItem("myTempDatakey");
 ```
 
-Browsers provide differing levels of storage space for localStorage and sessionStorage, ranging from as little as 2mb up to unlimited.
-
-Accordingly, you should try to reduce the overall footprint of your data as much as possible.
+Browsers provide differing levels of storage space for localStorage and sessionStorage, ranging from as little as 2mb up to unlimited. You should try to reduce the overall footprint of your data as much as possible.
 
 We begin by creating a key for our nytimes data and then checking for the data in local storage. If it exists then we'll use that data. Otherwise we'll fetch the data from the nytimes api:
 
