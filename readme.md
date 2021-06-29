@@ -36,15 +36,6 @@
 
 Prepare your final project.
 
-Your final project will be a static portfolio site generated using 11ty. You can use the JAMStack exercise as a foundation. I fully expect your project to be a work in progress therefore unfinished or partial projects are acceptable. However, it should include:
-
-- CSS (SASS is encouraged but not required)
-- DOM scripting - of any sort
-- A profile built from data in your Github profile using Fetch and the Github API, e.g. `https://api.github.com/users/DannyBoyNYC`
-- Responsive design
-
-Note: if you have another project in mind feel free to let me know.
-
 ## Reading
 
 - [Using Git, Github and 11ty](https://youtu.be/PqlhYVqLDm0) together to create a simple site.
@@ -63,11 +54,10 @@ We will be using many of the files and techniques we looked at last week. Before
 
 - `.gitignore` - includes the `dist` directory
 - `pages` - our base directory
-- `layouts` - our `layout.html` file now references components via `include`
-- `.eleventyignore` - instructs 11ty to not process `readme.md` (this file - for obvious reasons) and anything in the ignore directory
-- `.eleventy.js` - passthroughs for images and JS
-- `scripts.js` - removed dependency on pressing a button and call the function directly
-- `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `_site` folder but will instead render to the top level (i.e. it becomes `index.html`). Therefore `<li><a href="/">Home</a></li>` has been removed from the navigation as it is no longer necessary.
+- `layouts` - our `layout.html` file now references partials via `include`
+- `.eleventyignore` - instructs 11ty to not process `readme.md` (this file) and the ignore directory
+- `.eleventy.js` - passthroughs for images and JS but not css
+- `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `dist` folder but will instead render to the top level (i.e. it becomes `index.html`). Therefore `<li><a href="/">Home</a></li>` has been removed from the navigation as it is no longer necessary.
 
 ## GIT
 
@@ -97,7 +87,7 @@ $ git push -u origin main
 
 ## Deployment
 
-We'll use [Netlify](https://www.netlify.com/) to put this on the web. Register and/or log in to [app.netlify.com](https://app.netlify.com) and drag and drop the `_site` folder onto the web browser window to upload the contents [live to the web](https://zealous-kilby-113356.netlify.com/).
+We'll use [Netlify](https://www.netlify.com/) to put this on the web. Register and/or log in to [app.netlify.com](https://app.netlify.com) and drag and drop the `dist` folder onto the web browser window to upload the contents [live to the web](https://zealous-kilby-113356.netlify.com/).
 
 We can also hook into a Github branch to set up [continuous delpoyment](https://app.netlify.com/start). Here is a [sample](https://agitated-bartik-814348.netlify.com/) with [admin](https://agitated-bartik-814348.netlify.com/admin).
 
@@ -110,7 +100,7 @@ $ git checkout dev
 
 In the future you will be able to merge your dev branch with the master branch and have your site updated automatically.
 
-Make sure the branch is clean, then checkout the main (master) branch and push to Github. Netlify will take over from there - running the eleventy command to create a `_site` folder and putting that on its CDN.
+Make sure the branch is clean, then checkout the main (master) branch and push to Github. Netlify will take over from there - running the eleventy command to create a `dist` folder and putting that on its CDN.
 
 ```sh
 $ git add .
@@ -273,26 +263,28 @@ Add to scripts:
   "main": "index.js",
   "scripts": {
     "eleventy": "eleventy --serve",
-    "sass": "sass ignore/scss/styles.scss static/css/styles.css --watch --source-map",
+    "sass": "sass src/scss/styles.scss dist/css/styles.css --watch --source-map",
     "start": "npm run eleventy & npm run sass"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@11ty/eleventy": "^0.7.1",
     "sass": "^1.17.3"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^0.12.1"
   }
 }
 ```
 
-CSS minifcation can be added since the `_site` folder is our production version
+CSS minifcation can be added since the `dist` folder is our production version
 
-`"sass": "sass ignore/scss/styles.scss static/css/styles.css --watch --source-map --style=compressed",`
+`"sass": "sass src/scss/styles.scss dist/css/styles.css --watch --source-map --style=compressed",`
 
 Stop (`ctrl-c`) and restart (`npm start`) the processes.
 
-Call the sass partial from `styles.scss`
+Call the sass partials from `styles.scss`
 
 ```css
 @import "imports/normalize";
@@ -308,7 +300,7 @@ If you prefer to use the VS Code plugin [Live Sass Compiler](https://marketplace
 {
   "liveSassCompile.settings.formats": [
       {
-          "savePath": "/_site/static/css/",
+          "savePath": "/dist/static/css/",
           "format": "expanded"
       }
   ],
@@ -326,7 +318,7 @@ See the full [documentation](https://github.com/ritwickdey/vscode-live-sass-comp
 
 Click the `Watch Sass` button at the bottom of the editor.
 
-Note: since we are compiling the css directly to the `_site` folder, there is no need for the passthrough in `.eleventy.js`.
+Note: since we are compiling the css directly to the `dist` folder, there is no need for the passthrough in `.eleventy.js`.
 
 ### Nesting SASS
 
@@ -469,7 +461,7 @@ header {
 
 ## Responsive Main Nav
 
-Note the link `<a href="#" id="pull"></a>` in the nav.
+Add the link `<a href="#" id="pull"></a>` to the nav.
 
 ```html
 <nav>
@@ -495,6 +487,7 @@ Small screen first - show and format the hamburger menu:
   height: 32px;
   padding-top: 12px;
   padding-left: 12px;
+  width: 100vh;
 }
 
 #pull::after {
@@ -511,7 +504,9 @@ Format the ul for the small screen:
 
 ```css
 nav ul {
-  /* display: none; */
+  // display: none;
+  padding: 0;
+  margin: 0;
   list-style: none;
   background-color: $link;
 }
@@ -550,7 +545,7 @@ var body = document.querySelector("body");
 
 hamburger.addEventListener("click", showMenu);
 
-function showMenu() {
+function showMenu(event) {
   body.classList.toggle("show-nav");
   event.preventDefault();
 }
@@ -559,7 +554,12 @@ function showMenu() {
 or, using event delegation:
 
 ```js
-function clickHandlers() {
+// var hamburger = document.querySelector("#pull");
+// var body = document.querySelector("body");
+
+document.addEventListener("click", clickHandlers);
+
+function clickHandlers(event) {
   console.log(event.target);
   if (event.target.matches("#pull")) {
     document.querySelector("body").classList.toggle("show-nav");
@@ -707,7 +707,7 @@ nav .active a {
 
 Make any additional adjustments.
 
-Note: if we were using React or Angular or Vue to make a single page app (SPA) we would have to code the menu to disappear when a selection was made. But because we are actually navigating to a new URL, the menu collapses naturally.
+Note: if we were making a single page app (SPA) we would have to code the menu to disappear when a selection was made. But because we are actually navigating to a new URL, the menu collapses naturally.
 
 ## Video Component
 
@@ -788,7 +788,7 @@ videoLinks.forEach((videoLink) =>
 //   videoLinks[i].addEventListener('click', selectVideo)
 // }
 
-function selectVideo() {
+function selectVideo(event) {
   console.log(event.target);
   event.preventDefault();
 }
@@ -821,7 +821,7 @@ videoLinks.forEach((videoLink) =>
   videoLink.addEventListener("click", selectVideo)
 );
 
-function selectVideo() {
+function selectVideo(event) {
   const videoToPlay = event.target.getAttribute("href");
   console.log(videoToPlay);
   event.preventDefault();
@@ -877,9 +877,7 @@ function removeActiveClass() {
 }
 ```
 
-<!-- HERE -->
-
-For performance reasons, you also should not loop over each element and attach an even listener to it.
+For performance reasons, you also should not loop over each element and attach an event listener to it.
 
 Delete the video code and use event delegation:
 
@@ -904,7 +902,7 @@ function clickHandlers() {
 Note: our clickHandlers function is getting out of hand. Let's use it to call separate functions:
 
 ```js
-function clickHandlers() {
+function clickHandlers(event) {
   if (event.target.matches("#pull")) {
     showMenu();
     event.preventDefault();
@@ -957,7 +955,7 @@ p {
 
 ## Create Posts
 
-Create a new posts folder at the top level of the project.
+Create a new posts folder in src.
 
 Create two posts.
 
@@ -1003,30 +1001,24 @@ Create `posts.json`:
 
 ```
 
-Use the content on the home page.
+Use the content on the blog page.
 
-`home.md`:
+`blog.html`:
 
 ```md
 ---
-layout: layouts/layout.html
-pageTitle: Welcome
-tags:
-  - nav
-navTitle: Home
-date: 2010-01-01
-permalink: /
+pageTitle: About Us
+date: 2019-03-01
+navTitle: About Us
+pageClass: blog
 ---
 
 <section>
-  
   {% for post in collections.posts %}
   <article>
-  {{ post.templateContent }}
-  {{ post.date | date: "%Y-%m-%d" }}
+    {{ post.templateContent }} {{ post.date | date: "%Y-%m-%d" }}
   </article>
   {% endfor %}
-  
 </section>
 ```
 
