@@ -98,7 +98,7 @@ $ git branch dev
 $ git checkout dev
 ```
 
-In the future you will be able to merge your dev branch with the master branch and have your site updated automatically.
+In the future you will be able to merge your dev branch with the master branch, push it to Github and have your site updated automatically.
 
 Make sure the branch is clean, then checkout the main (master) branch and push to Github. Netlify will take over from there - running the eleventy command to create a `dist` folder and putting that on its CDN.
 
@@ -143,11 +143,12 @@ var tempData = sessionStorage.getItem("myTempDataKey");
 sessionStorage.removeItem("myTempDatakey");
 ```
 
-Browsers provide differing levels of storage space for localStorage and sessionStorage, ranging from as little as 2mb up to unlimited. You should try to reduce the overall footprint of your data as much as possible.
+Browsers provide differing levels of storage space for localStorage and sessionStorage, ranging from as little as 2mb up to unlimited. Try to reduce the overall footprint of your data as much as possible.
 
 We begin by creating a key for our nytimes data and then checking for the data in local storage. If it exists then we'll use that data. Otherwise we'll fetch the data from the nytimes api:
 
 ```js
+// the key
 const storagePrefix = "nyt-autosave";
 // omitted for brevity
 
@@ -232,7 +233,7 @@ Update the [navigation](https://www.11ty.io/docs/) to include an active class us
 
 ## Header
 
-Add the first component to `layout.js` after the nav include, e.g.:
+Add the first component to `layout.html` after the nav include, e.g.:
 
 ```
 {% include components/nav.html %}
@@ -241,84 +242,39 @@ Add the first component to `layout.js` after the nav include, e.g.:
 
 ## SASS
 
-Examine the directories in the ignore directory.
+Stop 11ty processing and install sass:
 
-Copy and paste the contents of `styles.css` to `_base.scss`.
-
-Install sass:
-
-```
+```sh
 $ npm i -D sass
 ```
 
 Note: `i` is short for `install` and `-D` is short for `--save-dev`
 
-Add to scripts:
+Add scripts to the manifest:
 
 ```js
-{
-  "name": "eleventy2",
-  "version": "1.0.0",
-  "description": "## Homework",
-  "main": "index.js",
   "scripts": {
     "eleventy": "eleventy --serve",
     "sass": "sass src/scss/styles.scss dist/css/styles.css --watch --source-map",
     "start": "npm run eleventy & npm run sass"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "sass": "^1.17.3"
-  },
-  "dependencies": {
-    "@11ty/eleventy": "^0.12.1"
-  }
-}
 ```
 
 CSS minifcation can be added since the `dist` folder is our production version
 
 `"sass": "sass src/scss/styles.scss dist/css/styles.css --watch --source-map --style=compressed",`
 
-Stop (`ctrl-c`) and restart (`npm start`) the processes.
+Restart (`npm start`) the processes.
 
-Call the sass partials from `styles.scss`
+Copy and paste the contents of `styles.css` to `_base.scss`.
+
+Include the sass partial in `styles.scss`
 
 ```css
-@import "imports/normalize";
-@import "imports/main";
 @import "imports/base";
 ```
 
-### Aside: Using Live SASS Compiler in VS Code
-
-If you prefer to use the VS Code plugin [Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass) for VS Code set the _workspace settings_ as shown:
-
-```js
-{
-  "liveSassCompile.settings.formats": [
-      {
-          "savePath": "/dist/static/css/",
-          "format": "expanded"
-      }
-  ],
-  "liveSassCompile.settings.excludeList": [
-      "**/node_modules/**",
-      ".vscode/**",
-      "**/other/**"
-  ]
-}
-```
-
-Note the `.vscode` directory that is created for per project settings.
-
-See the full [documentation](https://github.com/ritwickdey/vscode-live-sass-compiler/blob/master/docs/settings.md) for settings.
-
-Click the `Watch Sass` button at the bottom of the editor.
-
-Note: since we are compiling the css directly to the `dist` folder, there is no need for the passthrough in `.eleventy.js`.
+Note: since we are compiling the scss directly to the `dist` folder, there is no need for a css passthrough in `.eleventy.js`.
 
 ### Nesting SASS
 
@@ -350,7 +306,7 @@ header {
 }
 ```
 
-Compare the resulting css file with the source sass file.
+Examine the resulting css file. Note the minification and mapping.
 
 Inspect the header in the developer tools and note that _mapping_ maps the css line numbers to the scss line numbers
 
@@ -368,11 +324,12 @@ Normally this would be written as:
 }
 ```
 
-But because we are nesting we can simply write (in `_header.scss`):
+But because we are nesting with sass we can simply write (in `_header.scss`):
 
 ```css
 p {
-  ... @media (max-width: 780px) {
+  /* ...  */
+  @media (max-width: 780px) {
     display: none;
   }
 }
@@ -461,7 +418,7 @@ header {
 
 ## Responsive Main Nav
 
-Add the link `<a href="#" id="pull"></a>` to the nav.
+Add a link `<a href="#" id="pull"></a>` to the nav:
 
 ```html
 <nav>
@@ -484,7 +441,6 @@ Small screen first - show and format the hamburger menu:
 #pull {
   display: block;
   background-color: $link;
-  height: 32px;
   padding-top: 12px;
   padding-left: 12px;
   width: 100vh;
@@ -511,10 +467,6 @@ nav ul {
   background-color: $link;
 }
 
-nav li:hover:not(.active) {
-  background-color: lighten($link, 10%);
-}
-
 nav a {
   padding: 1rem;
   color: #fff;
@@ -524,6 +476,10 @@ nav a {
   &:hover {
     text-decoration: none;
   }
+}
+
+nav li:hover:not(.active) {
+  background-color: lighten($link, 10%);
 }
 
 nav .active {
@@ -537,7 +493,7 @@ nav .active a {
 
 ### Show/Hide Nav
 
-Add to the top of `static/js/scripts`:
+Add to the top of `scripts.js`:
 
 ```js
 var hamburger = document.querySelector("#pull");
@@ -569,7 +525,25 @@ function clickHandlers(event) {
 }
 ```
 
-Add a `.show-nav` class to `_nav.scss`:
+Enable the `display: none` property on `nav ul` and add a `.show-nav` class in `_nav.scss`:
+
+```css
+.show-nav nav ul {
+  display: block;
+}
+```
+
+Note that the content shifts down when the nav is visible.
+
+```css
+.show-nav nav ul {
+  display: block;
+  position: absolute;
+  width: 100%;
+}
+```
+
+We can use flex wiith a column direction instead of display block:
 
 ```css
 .show-nav nav ul {
@@ -582,7 +556,7 @@ Add a `.show-nav` class to `_nav.scss`:
 
 ### Large Screen
 
-Add media queries for medium and larger screens
+Add media queries for medium and larger screens.
 
 Hide the hamburger on wider screens:
 
@@ -590,7 +564,6 @@ Hide the hamburger on wider screens:
 #pull {
   display: block;
   background-color: $link;
-  height: 48px;
   padding-top: 12px;
   padding-left: 12px;
   @media (min-width: $break-med) {
@@ -604,6 +577,8 @@ Show the navigation on large screens:
 ```css
 nav ul {
   display: none;
+  padding: 0;
+  margin: 0;
   list-style: none;
   background-color: $link;
   @media (min-width: $break-med) {
@@ -615,9 +590,13 @@ nav ul {
 }
 ```
 
-Format the flex children to allow them to grow:
+Format the flex children with `flex-grow` to allow the li's to expand.
 
 ```css
+// nav li:hover:not(.active) {
+//   background-color: lighten($link, 10%);
+// }
+
 nav li {
   &:hover:not(.active) {
     background-color: lighten($link, 10%);
@@ -627,85 +606,10 @@ nav li {
   }
 }
 ```
-
-`flex-grow` allows the li's to expand.
 
 The complex selector with the ampersand compiles to `nav li:hover:not(.active)`. Without the ampersand it compiles to `nav li :hover:not(.active)`. See [CSS Tricks](https://css-tricks.com/the-sass-ampersand/) for more information on the ampersand in SASS.
 
 Check the navigation on both sizes and make adjustments as necessary.
-
-Here is the final `_nav.scss`:
-
-```css
-#pull {
-  display: block;
-  background-color: $link;
-  height: 48px;
-  padding-top: 12px;
-  padding-left: 12px;
-  @media (min-width: $break-med) {
-    display: none;
-  }
-}
-
-#pull::after {
-  content: "";
-  background: url(../img/nav-icon.png) no-repeat;
-  width: 22px;
-  height: 22px;
-  background-size: cover;
-  display: inline-block;
-}
-
-nav ul {
-  display: none;
-  list-style: none;
-  background-color: $link;
-  @media (min-width: $break-med) {
-    display: flex;
-    justify-content: space-around;
-    background: $link;
-    text-align: center;
-  }
-}
-
-nav li {
-  &:hover:not(.active) {
-    background-color: lighten($link, 10%);
-  }
-  @media (min-width: $break-med) {
-    flex-grow: 1;
-  }
-}
-
-nav a {
-  padding: 1rem;
-  color: #fff;
-  display: inline-block;
-  width: 100%;
-  box-sizing: border-box;
-  &:hover {
-    text-decoration: none;
-  }
-}
-
-nav .active {
-  background-color: darken($link, 10%);
-}
-
-nav .active a {
-  font-weight: bold;
-}
-
-.show-nav nav ul {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  width: 100%;
-}
-```
-
-Make any additional adjustments.
 
 Note: if we were making a single page app (SPA) we would have to code the menu to disappear when a selection was made. But because we are actually navigating to a new URL, the menu collapses naturally.
 
@@ -717,7 +621,7 @@ Add the component to `videos.md`
 <section>{% include components/video.html %}</section>
 ```
 
-Examine the component's HTML.
+Examine the component's HTML in the dev tools.
 
 Format the video and buttons in a new `_video.scss`:
 
@@ -732,9 +636,6 @@ Format the video and buttons in a new `_video.scss`:
     display: flex;
     li {
       margin: 1rem;
-      a {
-        text-decoration: none;
-      }
     }
     .active {
       border-radius: 4px;
@@ -767,7 +668,7 @@ Create variables and a function:
 const videoLinks = document.querySelectorAll(".content-video a");
 
 videoLinks.forEach((videoLink) =>
-  videoLink.addEventListener("click", function () {
+  videoLink.addEventListener("click", function (event) {
     console.log(event.target);
     event.preventDefault();
   })
@@ -780,13 +681,10 @@ Add a `selectVideo` function:
 
 ```js
 const videoLinks = document.querySelectorAll(".content-video a");
+
 videoLinks.forEach((videoLink) =>
   videoLink.addEventListener("click", selectVideo)
 );
-
-// for (let i = 0; i < videoLinks.length; i++){
-//   videoLinks[i].addEventListener('click', selectVideo)
-// }
 
 function selectVideo(event) {
   console.log(event.target);
@@ -794,19 +692,11 @@ function selectVideo(event) {
 }
 ```
 
-Note: we are using `forEach` - a method that exists for both nodeLists and Arrays - as a replacement for a traditional for loop (commented out).
+Note: we are using `forEach` - a method that exists for both nodeLists and Arrays.
 
-Examine the nodelist in the console.
+Examine the videoLinks in the console. Not, they are a nodelist.
 
-Iterable Nodelists are a relatively new feature in JavaScript.
-
-If you were concerned about compatibility you could create a true Array from a nodelist by declaring a new variable and spreading the contents on the nodeList into it:
-
-`const videoLinksArray = [...videoLinks]`
-
-And operate on that. But the spread operator (`...`) is also a relatively new feature.
-
-For maximum compatibility use `Array.from()`:
+If you want to convert them into an array use `Array.from()`:
 
 `const videoLinks = Array.from(document.querySelectorAll('.content-video a'));`
 
@@ -834,7 +724,7 @@ Add a variable for the iFrame:
 
 `const iFrame = document.querySelector('iframe')`
 
-and set its src attribute:
+and set its src attribute to the videoToPlay variable:
 
 `iFrame.setAttribute('src', videoToPlay)`:
 
@@ -846,7 +736,7 @@ videoLinks.forEach((videoLink) =>
   videoLink.addEventListener("click", selectVideo)
 );
 
-function selectVideo() {
+function selectVideo(event) {
   const videoToPlay = event.target.getAttribute("href");
   iFrame.setAttribute("src", videoToPlay); // NEW
   console.log(iFrame); // NEW
@@ -863,7 +753,7 @@ videoLinks.forEach((videoLink) =>
   videoLink.addEventListener("click", selectVideo)
 );
 
-function selectVideo() {
+function selectVideo(event) {
   removeActiveClass(); // NEW
   this.classList.add("active"); // NEW
   const videoToPlay = event.target.getAttribute("href");
@@ -882,7 +772,7 @@ For performance reasons, you also should not loop over each element and attach a
 Delete the video code and use event delegation:
 
 ```js
-function clickHandlers() {
+function clickHandlers(event) {
   if (event.target.matches("#pull")) {
     document.querySelector("body").classList.toggle("show-nav");
     event.preventDefault();
