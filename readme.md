@@ -121,6 +121,8 @@ $ git push -u origin master
 
 ## LocalStorage and SessionStorage
 
+It seems excessive to check the NY Times API every time we go to the home page.
+
 The localStorage and sessionStorage APIs let you store data locally in the browser. You can use the local storage API to store data locally that the browser can access later.
 
 Data is stored indefinitely, and must be a string.
@@ -159,12 +161,17 @@ We begin by creating a key for our nytimes data and then checking for the data i
 
 ```js
 const storagePrefix = "nyt-autosave";
-...
+// omitted for brevity
+
+function showData(stories) {
+  // omitted for brevity
+  sessionStorage.setItem(storagePrefix, looped);
+}
 
 if (document.querySelector(".home")) {
-  var saved = localStorage.getItem(storagePrefix);
+  var saved = sessionStorage.getItem(storagePrefix);
   if (saved) {
-    console.log("loading from local storage");
+    console.log("loading from sessionStorage");
     document.querySelector(".stories").innerHTML = saved;
   } else {
     console.log("fetching from nytimes");
@@ -173,42 +180,66 @@ if (document.querySelector(".home")) {
 }
 ```
 
-## Expiring localStorage Data
-
-Unlike cookies, localStorage does not have a native method for expiring data. It’s kept in storage until you or the user explicitly delete it.
-
-Save your data as an object with two keys:
-
-- The data key holds the data itself.
-- The timestamp key is the date your data was saved on. We can compare it to the current date, and fetch new data or delete it after a certain period of time.
-
-reate an object with your two keys. Set the data key as your data, and use new Date().getTime() for the timestamp key. This creates a UTC timestamp of the current time.
-
-Then, stringify your object and save it to localStorage.
-
-```js
-// Setup the localStorage data
-var data = {
-  data: data,
-  timestamp: new Date().getTime(),
-};
-
-// Save to localStorage
-localStorage.setItem("myData", JSON.stringify(data));
+<!--
 ```
+const key = "uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
+const API = `https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=${key}`;
+const storagePrefix = "nyt-autosave";
+
+function getStories() {
+  fetch(API)
+    .then((response) => response.json())
+    .then((data) => showData(data.results));
+}
+
+function showData(stories) {
+  var looped = stories
+    .map(
+      (story) => `
+    <div class="item">
+    <picture>
+    <img src="${story.multimedia[2].url}" alt="" />
+    <caption>${story.multimedia[2]?.caption}</caption>
+    </picture>
+      <h3><a href="${story.url}">${story.title}</a></h3>
+      <p>${story.abstract}</p>
+    </div>
+  `
+    )
+    .join("");
+
+  sessionStorage.setItem(storagePrefix, looped);
+  document.querySelector(".stories").innerHTML = looped;
+}
+
+if (document.querySelector(".home")) {
+  var saved = sessionStorage.getItem(storagePrefix);
+  if (saved) {
+    console.log("loading from sessionStorage");
+    document.querySelector(".stories").innerHTML = saved;
+  } else {
+    console.log("fetching from nytimes");
+    getStories();
+  }
+}
+
+```
+ -->
 
 ## Active Class for the Navigation
 
 Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
 
 ```html
-<ul>
-  {% for nav in collections.nav %}
-  <li class="{% if nav.url == page.url %} active{% endif %}">
-    <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
-  </li>
-  {%- endfor -%}
-</ul>
+<nav>
+  <ul>
+    {% for nav in collections.nav %}
+    <li class="{% if nav.url == page.url %} active{% endif %}">
+      <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
+    </li>
+    {%- endfor -%}
+  </ul>
+</nav>
 ```
 
 ## Header
