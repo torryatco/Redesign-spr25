@@ -860,9 +860,9 @@ postTitle: Services
 
 # Our Services
 
-Stet nostro usu no, ius ex hinc nonumes nostrum. Id qui quodsi copiosae. In vis harum audire efficiantur, ea illum persecuti suscipiantur mei. Laboramus pertinacia eum id, id eos commune probatus menandri, mentitum apeirian mandamus cu mel. Hinc omnis tractatos eum in, veritus oporteat an vim, ius liber probatus no.
+Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
 
-Pro tota liber latine id. Ei mel temporibus ullamcorper. Ea pro novum ignota percipit, duo modus torquatos disputando cu, ius cu fastidii constituam voluptatibus. Eam an exerci labore impetus.
+Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.
 ```
 
 2. `people.md`:
@@ -876,9 +876,9 @@ postTitle: People
 
 # People
 
-Lorem ipsum dolor sit amet, ut per facer evertitur. Graeco indoctum comprehensam et his, eripuit platonem vituperata nam id. Duo purto fuisset at, augue summo luptatum eam ut, pro at feugait invenire necessitatibus. Malorum volutpat ut vis, sed an semper dicunt aliquam. Id vel nullam tincidunt.
+Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.
 
-Cibo putent scriptorem ne vis. Ea adhuc tincidunt sit, an enim albucius omittantur sit, ut minim prompta quo. Eu mel paulo utroque ullamcorper, et has nisl wisi debitis. Qui an munere populo facilis, ut usu cibo mediocrem. Te ocurreret interpretaris eum.
+Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. Override the digital divide with additional clickthroughs from DevOps. Nanotechnology immersion along the information highway will close the loop on focusing solely on the bottom line.
 ```
 
 Create `posts.json`:
