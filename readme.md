@@ -615,153 +615,6 @@ Note: if we were making a single page app (SPA) we would have to code the menu t
 
 <!-- HERE 2021 -->
 
-## Video Component
-
-Add the `video.html` component to `videos.md` and `pageClass: videos` to the front matter.
-
-```md
----
-pageClass: videos
----
-
-<section>{% include components/video.html %}</section>
-```
-
-Examine the component's HTML using the dev tools.
-
-Format the video and buttons in a new `_video.scss` partial:
-
-```css
-.content-video {
-  iframe {
-    background: #222;
-    height: 320px;
-  }
-  .btn-list {
-    padding: 6px;
-    display: flex;
-    li {
-      margin: 1rem;
-    }
-    .active {
-      border-radius: 4px;
-      background: $link;
-      color: #fff;
-      padding: 0.5rem;
-    }
-  }
-}
-```
-
-In `base`
-
-```css
-img,
-iframe {
-  width: 100%;
-}
-
-ul {
-  list-style: none;
-}
-```
-
-Clicking the buttons should reveal a different video.
-
-One method for doing this might look like this:
-
-```js
-const iFrame = document.querySelector("iframe");
-const videoLinks = document.querySelectorAll(".content-video a");
-videoLinks.forEach((videoLink) =>
-  videoLink.addEventListener("click", selectVideo)
-);
-
-function selectVideo(event) {
-  removeActiveClass();
-  this.classList.add("active");
-  const videoToPlay = event.target.getAttribute("href");
-  iFrame.setAttribute("src", videoToPlay);
-  event.preventDefault();
-}
-
-function removeActiveClass() {
-  videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
-}
-```
-
-However, we already have event delegation set up for click events so we can add an if statement to handle clicks on our video buttons:
-
-```js
-function clickHandlers(event) {
-  if (event.target.matches("#pull")) {
-    document.querySelector("body").classList.toggle("show-nav");
-    event.preventDefault();
-  }
-  if (event.target.matches(".content-video a")) {
-    const iFrame = document.querySelector("iframe");
-    const videoLinks = document.querySelectorAll(".content-video a");
-    videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
-    event.target.classList.add("active");
-    const videoToPlay = event.target.getAttribute("href");
-    iFrame.setAttribute("src", videoToPlay);
-    event.preventDefault();
-  }
-}
-```
-
-Note: our clickHandlers function is getting out of hand. Let's use it to call separate functions:
-
-```js
-function clickHandlers(event) {
-  if (event.target.matches("#pull")) {
-    showMenu();
-    event.preventDefault();
-  }
-  if (event.target.matches(".content-video a")) {
-    videoSwitch();
-    event.preventDefault();
-  }
-}
-
-var showMenu = function () {
-  document.querySelector("body").classList.toggle("show-nav");
-};
-
-var videoSwitch = function () {
-  const iFrame = document.querySelector("iframe");
-  const videoLinks = document.querySelectorAll(".content-video a");
-  videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
-  event.target.classList.add("active");
-  const videoToPlay = event.target.getAttribute("href");
-  iFrame.setAttribute("src", videoToPlay);
-};
-```
-
-To support a side-by-side layout on wide screens add the following to `_base.scss`:
-
-```css
-section {
-  @media (min-width: $break-med) {
-    max-width: $max-width;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-column-gap: 1rem;
-    padding-top: 2rem;
-    article {
-      iframe {
-        min-height: 300px;
-      }
-    }
-  }
-}
-
-p {
-  margin: 1rem 0;
-}
-```
-
 ## Create Posts
 
 Create a new posts folder in src.
@@ -813,9 +666,9 @@ Create `posts.json`:
 }
 ```
 
-Use the content on the blog page.
+Use the content on the existing blog page.
 
-`blog.html`:
+`blog.md`:
 
 ```md
 ---
@@ -834,57 +687,180 @@ pageClass: blog
 </section>
 ```
 
-<!-- If you wish you can create a series of links to the posts:
+## Videos Component
 
-In `pages/home.md`:
+In order to create the videos page we will leverage a subtemplate - a template that uses another template.
+
+Create `videos.html` in `layouts`:
 
 ```md
 ---
 layout: layouts/layout.html
-pageTitle: Welcome
-tags: nav
-navTitle: Home
-date: 2010-01-01
-permalink: /
 ---
 
-<section>
-
-{% for post in collections.posts %}
-
-  <article>
-  <h2><a href="{{ post.url }}">{{ post.data.postTitle | upcase }}</a></h2>
-  <p>{{ post.date | date: "%Y-%m-%d" }}<p>
-  </article>
-  {% endfor %}
-
-</section>
-``` -->
-
-## Subtemplates
-
-In order to further customize the video template we will set up a partial in `_includes/layouts/video.html`:
-
-```
----
-layout: layouts/layout.html
----
-
-<section>
-  {% include components/video.html %}
-</section>
-
-{{ content }}
-
+<section>{% include components/video.html %}</section>
 ```
 
-In `pages/videos.md`
+In `videos.md` add `pageClass: videos` to the front matter.
 
 ```md
 ---
-layout: layouts/video.html
+layout: layouts/videos.html
 pageTitle: Videos
 navTitle: Videos
+pageClass: videos
+date: 2019-01-01
+---
+
+[Home](/)
+```
+
+Go to the videos section of the website and examine the component's HTML using the dev tools.
+
+Format the video and buttons in a new `_videos.scss` partial:
+
+```css
+.content-video {
+  iframe {
+    background: #222;
+    height: 320px;
+    width: 100%;
+  }
+  .btn-list {
+    padding: 6px;
+    display: flex;
+    list-style: none;
+    li {
+      margin: 1rem;
+    }
+    .active {
+      border-radius: 4px;
+      background: $link;
+      color: #fff;
+      padding: 0.5rem;
+    }
+  }
+}
+```
+
+Clicking the buttons should reveal a different video.
+
+One method for doing this might look like:
+
+```js
+const iFrame = document.querySelector("iframe");
+const videoLinks = document.querySelectorAll(".content-video a");
+videoLinks.forEach((videoLink) =>
+  videoLink.addEventListener("click", selectVideo)
+);
+
+function selectVideo(event) {
+  removeActiveClass();
+  this.classList.add("active");
+  const videoToPlay = event.target.getAttribute("href");
+  iFrame.setAttribute("src", videoToPlay);
+  event.preventDefault();
+}
+
+function removeActiveClass() {
+  videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
+}
+```
+
+However, we already have event delegation set up for click events so we can add an if statement to handle clicks on our video buttons:
+
+```js
+function clickHandlers(event) {
+  if (event.target.matches("#pull")) {
+    document.querySelector("body").classList.toggle("show-nav");
+    event.preventDefault();
+  }
+  if (event.target.matches(".content-video a")) {
+    const iFrame = document.querySelector("iframe");
+    const videoLinks = document.querySelectorAll(".content-video a");
+    videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
+    event.target.classList.add("active");
+    const videoToPlay = event.target.getAttribute("href");
+    iFrame.setAttribute("src", videoToPlay);
+    event.preventDefault();
+  }
+}
+```
+
+Our clickHandlers function is becoming overly complex. Let's use it to call separate functions:
+
+```js
+function clickHandlers(event) {
+  if (event.target.matches("#pull")) {
+    showMenu();
+    event.preventDefault();
+  }
+  if (event.target.matches(".content-video a")) {
+    videoSwitch();
+    event.preventDefault();
+  }
+}
+
+function showMenu() {
+  document.querySelector("body").classList.toggle("show-nav");
+}
+
+function videoSwitch(event) {
+  const iFrame = document.querySelector("iframe");
+  const videoLinks = document.querySelectorAll(".content-video a");
+  videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
+  event.target.classList.add("active");
+  const videoToPlay = event.target.getAttribute("href");
+  iFrame.setAttribute("src", videoToPlay);
+}
+```
+
+To support a side-by-side layout on wide screens we'll leverage the `section` tag in `_base.scss`:
+
+```css
+section {
+  @media (min-width: $break-med) {
+    max-width: $max-width;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-column-gap: 1rem;
+    padding-top: 2rem;
+    article {
+      iframe {
+        min-height: 300px;
+      }
+    }
+  }
+}
+
+p {
+  margin: 1rem 0;
+}
+```
+
+Note that we can use the `{{ content }}` liquid object to add additional content to our pages.
+
+In `layouts/videos.html`:
+
+```md
+---
+layout: layouts/layout.html
+---
+
+<section>{% include components/video.html %}</section>
+
+{{ content }}
+```
+
+And in `pages/videos.md`
+
+```md
+---
+layout: layouts/videos.html
+pageTitle: Videos
+navTitle: Videos
+pageClass: videos
 date: 2019-01-01
 ---
 
@@ -893,7 +869,7 @@ Insisting that they had taken every measure to keep the message “extra top sec
 [Home](/)
 ```
 
-### Image Carousel
+## Image Carousel
 
 Add a new layout file `images.html` to `_includes/layouts`:
 
@@ -960,7 +936,7 @@ li img {
 
 ### Content Slider
 
-The large image on the images page
+Style the large image on the images page
 
 ```css
 figure {
@@ -978,12 +954,10 @@ figure {
 
 ## Event Delegation
 
-Delete the scripts related to the carousel.
-
 Let's see what we are clicking on when we click on a thumbnail.
 
 ```js
-function clickHandlers() {
+function clickHandlers(event) {
   event.preventDefault(); // NEW
   console.log(event.target); //NEW
   if (event.target.matches("#pull")) {
@@ -999,7 +973,7 @@ function clickHandlers() {
 
 We are getting the image node.
 
-Block the default event on the click:
+Block the default event on the click and call a new `runCarousel` function:
 
 ```js
 function clickHandlers() {
@@ -1012,35 +986,29 @@ function clickHandlers() {
     event.preventDefault();
   }
   if (event.target.matches(".image-tn img")) {
+    runCarousel();
     event.preventDefault();
   }
 }
 ```
 
-Add a function:
+The function:
 
 ```js
-function runCarousel() {
+function runCarousel(event) {
   const imageHref = event.target.parentNode.getAttribute("href");
   console.log(imageHref);
 }
 ```
 
-and a call to that function in `clickHandlers`:
-
-```js
-if (event.target.matches(".image-tn img")) {
-  runCarousel();
-  event.preventDefault();
-}
-```
+Correct the error by passing the event to the runCarousel function.
 
 Our clicks now capture the href value of the linked thumbnails.
 
 Capture the title text:
 
 ```js
-function runCarousel() {
+function runCarousel(event) {
   const imageHref = event.target.parentNode.getAttribute("href");
   const titleText = event.target.title;
   console.log(titleText);
@@ -1050,10 +1018,11 @@ function runCarousel() {
 Finallly, use those two variables to set the large image and caption:
 
 ```js
-function runCarousel() {
+function runCarousel(event) {
   const imageHref = event.target.parentNode.getAttribute("href");
   const titleText = event.target.title;
   document.querySelector("figure img").setAttribute("src", imageHref);
+  // document.querySelector("figure img").src = imageHref;
   document.querySelector("figcaption").innerHTML = titleText;
 }
 ```
@@ -1103,7 +1072,7 @@ Create `_includes/components/contact.html` with the following HTML.
       max="10"
       step="2"
       required
-      placeholder="Even num < 10"
+      placeholder="An even num less than 10"
     />
 
     <label for="range">Range</label>
@@ -1155,13 +1124,8 @@ form {
   padding: 2em 0;
 }
 
-input,
-textarea,
-button {
-  width: 100%;
-  padding: 1em;
-  margin-bottom: 1em;
-  font-size: 1rem;
+label {
+  display: block;
 }
 
 input,
@@ -1170,7 +1134,15 @@ textarea {
   border-radius: 5px;
 }
 
+input,
+textarea {
+  width: 90%;
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
 button {
+  padding: 6px;
   border: 1px solid $link;
   background-color: $link;
   color: #fff;
@@ -1178,17 +1150,12 @@ button {
 }
 ```
 
-There are a number of css pseudo selectors and techniques that can be used with forms:
+There are a number of useful pseudo selectors associated with forms that you should be aware of:
 
 ```css
 input:focus,
 textarea:focus {
   box-shadow: 0 0 15px lighten($link, 40%);
-}
-
-input:not(:focus),
-textarea:not(:focus) {
-  opacity: 0.35;
 }
 
 input:required,
@@ -1201,11 +1168,6 @@ textarea:valid {
   background-color: lighten(green, 60%);
 }
 
-input:invalid,
-textarea:invalid {
-  background-color: lighten(red, 40%);
-}
-
 input:focus:invalid,
 textarea:focus:invalid {
   background-color: lighten(red, 40%);
@@ -1214,11 +1176,11 @@ textarea:focus:invalid {
 
 ### Form Elements
 
-`<form>`:
+The `<form>` tag:
 
 - action - specifies where to send the user when a form is submitted
 - method - specifies the HTTP method to use when sending form-data
-- novalidate - turns validation off, typically used when you provide your own custom validations routines
+- novalidate - turns validation off, typically used when you provide your own custom validation routines
 
 `<fieldset>`:
 
@@ -1235,13 +1197,13 @@ textarea:focus:invalid {
 
 - specifies an input field where the user can enter data.
 - can accept autocomplete and autofocus
-- is empty (`/>`) and consists of attributes only
+- is empty (`/>`) and consists of attributes only, no children
 
 `<input>` attributes:
 
 - `name` - Specifies the name of an `<input>` element used to reference form data after a form is submitted
 - `type` - the [type](https://www.w3schools.com/tags/att_input_type.asp) attribute determines the nature of the input
-- `required` - the data is requred, works with native HTML5 validation
+- `required` - the data is required, works with native HTML5 validation
 - `placeholder` - the text the user sees before typing
 
 Additional input attributes we will be using:
@@ -1249,9 +1211,9 @@ Additional input attributes we will be using:
 - `pattern` - uses a [regular expression](https://www.w3schools.com/TAGS/att_input_pattern.asp) that the `<input>` element's value is checked against on form submission
 - `title` - use with pattern to specify extra information about an element, not form specific, often shown as a tooltip text, here - describes the pattern to help the user
 
-DELETE THE FORM FIELDS LEAVING ONLY THE BUTTON.
+DELETE the website, number and range FIELDS LEAVING ONLY name, email and textarea.
 
-Add the name field:
+Edit the name field:
 
 ```html
 <label for="name">Name</label>
@@ -1282,121 +1244,27 @@ Add the email field:
 />
 ```
 
-Add the textarea:
-
-```html
-<label for="message">Message</label>
-<textarea
-  name="message"
-  id="message"
-  placeholder="Write your message here"
-  rows="7"
-  required
-></textarea>
-```
-
 Add a data attribute to allow Netlify to process the posting:
 
 ```html
-<form name="contact" data-netlify="true" action="/"></form>
+<form action="/" data-netlify="true"></form>
 ```
 
 Note: the form will not function correctly on localhost.
 
 (In order to run the form locally we might try installing [Netlify Dev](https://www.netlify.com/products/dev/) but for today we'll deploy and test the deployed form.)
 
-Final form:
-
-```html
-<form name="contact" data-netlify="true" action="/" autocomplete>
-  <label for="name">Name</label>
-  <input
-    type="text"
-    name="name"
-    id="name"
-    autocomplete="name"
-    title="Please enter your name"
-    required
-  />
-
-  <label for="email">Email</label>
-  <input
-    type="email"
-    name="email"
-    id="email"
-    autocomplete="email"
-    title="The email address is invalid."
-    pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
-    required
-  />
-
-  <label for="message">Message</label>
-  <textarea
-    name="message"
-    id="message"
-    placeholder="Write your message here"
-    rows="7"
-    required
-  ></textarea>
-
-  <button type="submit">Send Message</button>
-</form>
-```
-
-### CSS
-
-Replace all the css in `_form.scss` with:
-
-```css
-form {
-  padding: 2em 0;
-}
-
-input,
-textarea {
-  width: 96%;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-
-input,
-textarea {
-  font-family: inherit;
-  border: 1px solid $med-gray;
-  border-radius: 5px;
-}
-
-button {
-  background-color: $link;
-  color: #fff;
-  cursor: pointer;
-}
-
-input:focus,
-textarea:focus {
-  box-shadow: 0 0 15px lighten($link, 40%);
-}
-
-input:required,
-textarea:required {
-  background-color: lighten($link, 60%);
-}
-
-input:valid,
-textarea:valid {
-  background-color: lighten(green, 60%);
-}
-
-input:invalid,
-textarea:invalid {
-  background-color: lighten(red, 40%);
-}
-
-input:focus:invalid,
-textarea:focus:invalid {
-  background-color: lighten(red, 40%);
-}
-```
-
 ## Notes
+
+```js
+document.addEventListener("submit", handleSubmit);
+
+function handleSubmit(event) {
+  event.preventDefault();
+  // The Object.fromEntries() method transforms a list of key-value pairs into an object.
+  // The FormData interface constructs a set of key/value pairs representing form fields and their values
+  const body = Object.fromEntries(new FormData(event.target));
+  // const body = JSON.stringify(Object.fromEntries(new FormData(event.target)));
+  console.log(" form data ", body);
+}
+```
