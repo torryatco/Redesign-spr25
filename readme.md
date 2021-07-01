@@ -619,7 +619,11 @@ Note: if we were making a single page app (SPA) we would have to code the menu t
 
 Add the `video.html` component to `videos.md` and `pageClass: videos` to the front matter.
 
-```html
+```md
+---
+pageClass: videos
+---
+
 <section>{% include components/video.html %}</section>
 ```
 
@@ -664,106 +668,29 @@ ul {
 
 Clicking the buttons should reveal a different video.
 
-<!-- Create variables and a function:
-
-```js
-const videoLinks = document.querySelectorAll(".content-video a");
-
-videoLinks.forEach((videoLink) =>
-  videoLink.addEventListener("click", function (event) {
-    console.log(event.target);
-    event.preventDefault();
-  })
-);
-```
-
-Examine the `videoLinks` nodelist in the console.
-
-Add a `selectVideo` function:
-
-```js
-const videoLinks = document.querySelectorAll(".content-video a");
-
-videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
-
-function selectVideo(event) {
-  console.log(event.target);
-  event.preventDefault();
-}
-```
-
-Note: we are using `forEach` - a method that exists for both nodeLists and Arrays.
-
-Examine the videoLinks in the console. Not, they are a nodelist.
-
-If you want to convert them into an array use `Array.from()`:
-
-`const videoLinks = Array.from(document.querySelectorAll('.content-video a'));`
-
-### Getting and Setting HTML Attributes
-
-Isolate the `href` value using `getAttribute`:
-
-```js
-const videoLinks = Array.from(document.querySelectorAll(".content-video a"));
-
-videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
-
-function selectVideo(event) {
-  const videoToPlay = event.target.getAttribute("href");
-  console.log(videoToPlay);
-  event.preventDefault();
-}
-```
-
-### Updating the Video
-
-Add a variable for the iFrame:
-
-`const iFrame = document.querySelector('iframe')`
-
-and set its src attribute to the videoToPlay variable:
-
-`iFrame.setAttribute('src', videoToPlay)`:
-
-```js
-const iFrame = document.querySelector("iframe"); // NEW
-const videoLinks = document.querySelectorAll(".content-video a");
-
-videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
-
-function selectVideo(event) {
-  const videoToPlay = event.target.getAttribute("href");
-  iFrame.setAttribute("src", videoToPlay); // NEW
-  console.log(iFrame); // NEW
-  event.preventDefault();
-}
-```
-
-Switch the active class:
+One method for doing this might look like this:
 
 ```js
 const iFrame = document.querySelector("iframe");
 const videoLinks = document.querySelectorAll(".content-video a");
-videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
+videoLinks.forEach((videoLink) =>
+  videoLink.addEventListener("click", selectVideo)
+);
 
 function selectVideo(event) {
-  removeActiveClass(); // NEW
-  this.classList.add("active"); // NEW
+  removeActiveClass();
+  this.classList.add("active");
   const videoToPlay = event.target.getAttribute("href");
   iFrame.setAttribute("src", videoToPlay);
   event.preventDefault();
 }
 
-// NEW
 function removeActiveClass() {
   videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
 }
 ```
 
-For performance reasons, you also should not loop over each element and attach an event listener to it. -->
-
-We already have event delegation set up for click events so we can add an if statement to handle clicks on our video buttons:
+However, we already have event delegation set up for click events so we can add an if statement to handle clicks on our video buttons:
 
 ```js
 function clickHandlers(event) {
@@ -1472,79 +1399,4 @@ textarea:focus:invalid {
 }
 ```
 
-## Content Management
-
-[Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) - a back-end only content management system built from the ground up as a content repository that makes content accessible via a RESTful API for display on any device.
-
-[Netlify CMS](https://www.netlifycms.org/).
-
-Here's a [tutorial](https://css-tricks.com/jamstack-comments/) on CSS-Tricks.
-
-https://www.netlifycms.org/docs/add-to-your-site/
-
-https://templates.netlify.com/template/eleventy-netlify-boilerplate/#about-deploy-to-netlify
-https://github.com/danurbanowicz/eleventy-netlify-boilerplate/blob/master/admin/preview-templates/index.js
-
 ## Notes
-
-js ajax and localstorage
-
-At a certain point I had to adjust the js to remove an error.
-
-```
----
-pageClass: blog
-pageTitle: Blog
-date: 2019-03-01
-navTitle: Blog
----
-
-<div class="blog"></div>
-```
-
-```js
-document.addEventListener("click", clickHandlers);
-
-var nyt =
-  "https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
-
-function clickHandlers() {
-  if (event.target.matches("#pull")) {
-    document.querySelector("body").classList.toggle("show-nav");
-    event.preventDefault();
-  }
-  if (event.target.matches(".content-video a")) {
-    const iFrame = document.querySelector("iframe");
-    const videoLinks = document.querySelectorAll(".content-video a");
-    videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
-    event.target.classList.add("active");
-    const videoToPlay = event.target.getAttribute("href");
-    iFrame.setAttribute("src", videoToPlay);
-    event.preventDefault();
-  }
-}
-
-var addContent = function (data) {
-  var looped = "";
-
-  for (i = 0; i < data.results.length; i++) {
-    looped += `
-      <div class="item">
-        <h3>${data.results[i].title}</h3>
-        <p>${data.results[i].abstract}</p>
-      </div>
-      `;
-  }
-  if (document.querySelector(".content .blog")) {
-    document.querySelector(".content .blog").innerHTML = looped;
-  }
-};
-
-var getData = function () {
-  fetch(nyt)
-    .then((response) => response.json())
-    .then((json) => addContent(json));
-};
-
-getData();
-```
