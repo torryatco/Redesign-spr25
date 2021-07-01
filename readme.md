@@ -613,17 +613,19 @@ Check the navigation on both sizes and make adjustments as necessary.
 
 Note: if we were making a single page app (SPA) we would have to code the menu to disappear when a selection was made. But because we are actually navigating to a new URL, the menu collapses naturally.
 
+<!-- HERE 2021 -->
+
 ## Video Component
 
-Add the component to `videos.md`
+Add the `video.html` component to `videos.md` and `pageClass: videos` to the front matter.
 
 ```html
 <section>{% include components/video.html %}</section>
 ```
 
-Examine the component's HTML in the dev tools.
+Examine the component's HTML using the dev tools.
 
-Format the video and buttons in a new `_video.scss`:
+Format the video and buttons in a new `_video.scss` partial:
 
 ```css
 .content-video {
@@ -662,7 +664,7 @@ ul {
 
 Clicking the buttons should reveal a different video.
 
-Create variables and a function:
+<!-- Create variables and a function:
 
 ```js
 const videoLinks = document.querySelectorAll(".content-video a");
@@ -682,9 +684,7 @@ Add a `selectVideo` function:
 ```js
 const videoLinks = document.querySelectorAll(".content-video a");
 
-videoLinks.forEach((videoLink) =>
-  videoLink.addEventListener("click", selectVideo)
-);
+videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
 
 function selectVideo(event) {
   console.log(event.target);
@@ -707,9 +707,7 @@ Isolate the `href` value using `getAttribute`:
 ```js
 const videoLinks = Array.from(document.querySelectorAll(".content-video a"));
 
-videoLinks.forEach((videoLink) =>
-  videoLink.addEventListener("click", selectVideo)
-);
+videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
 
 function selectVideo(event) {
   const videoToPlay = event.target.getAttribute("href");
@@ -732,9 +730,7 @@ and set its src attribute to the videoToPlay variable:
 const iFrame = document.querySelector("iframe"); // NEW
 const videoLinks = document.querySelectorAll(".content-video a");
 
-videoLinks.forEach((videoLink) =>
-  videoLink.addEventListener("click", selectVideo)
-);
+videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
 
 function selectVideo(event) {
   const videoToPlay = event.target.getAttribute("href");
@@ -749,9 +745,7 @@ Switch the active class:
 ```js
 const iFrame = document.querySelector("iframe");
 const videoLinks = document.querySelectorAll(".content-video a");
-videoLinks.forEach((videoLink) =>
-  videoLink.addEventListener("click", selectVideo)
-);
+videoLinks.forEach((videoLink) => videoLink.addEventListener("click", selectVideo));
 
 function selectVideo(event) {
   removeActiveClass(); // NEW
@@ -767,9 +761,9 @@ function removeActiveClass() {
 }
 ```
 
-For performance reasons, you also should not loop over each element and attach an event listener to it.
+For performance reasons, you also should not loop over each element and attach an event listener to it. -->
 
-Delete the video code and use event delegation:
+We already have event delegation set up for click events so we can add an if statement to handle clicks on our video buttons:
 
 ```js
 function clickHandlers(event) {
@@ -817,7 +811,7 @@ var videoSwitch = function () {
 };
 ```
 
-To support a side-by-side layout on wide screens add the following to base.scss:
+To support a side-by-side layout on wide screens add the following to `_base.scss`:
 
 ```css
 section {
@@ -825,7 +819,7 @@ section {
     max-width: $max-width;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     grid-column-gap: 1rem;
     padding-top: 2rem;
     article {
@@ -840,8 +834,6 @@ p {
   margin: 1rem 0;
 }
 ```
-
-<!-- HERE -->
 
 ## Create Posts
 
@@ -858,6 +850,8 @@ date: 2010-01-01
 postTitle: Services
 ---
 
+![rando image](https://source.unsplash.com/ITjiVXcwVng/300x200)
+
 # Our Services
 
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
@@ -873,6 +867,8 @@ layout: layouts/layout.html
 date: 2010-01-01
 postTitle: People
 ---
+
+![rando image](https://source.unsplash.com/gYl-UtwNg_I/300x200)
 
 # People
 
@@ -911,7 +907,7 @@ pageClass: blog
 </section>
 ```
 
-If you wish you can create a series of links to the posts:
+<!-- If you wish you can create a series of links to the posts:
 
 In `pages/home.md`:
 
@@ -936,7 +932,7 @@ permalink: /
   {% endfor %}
 
 </section>
-```
+``` -->
 
 ## Subtemplates
 
@@ -955,8 +951,6 @@ layout: layouts/layout.html
 
 ```
 
-## Note: fall2019 - continue on the video scripting above.
-
 In `pages/videos.md`
 
 ```md
@@ -972,25 +966,21 @@ Insisting that they had taken every measure to keep the message “extra top sec
 [Home](/)
 ```
 
-<!-- HERE -->
-
 ### Image Carousel
 
-Add and new layout file `images.html` to `_includes/layouts`:
+Add a new layout file `images.html` to `_includes/layouts`:
 
-```
+```md
 ---
 layout: layouts/layout.html
 ---
 
 {% include components/images.html %}
-
-{{ content }}
 ```
 
 In `images.md`
 
-```
+```md
 ---
 layout: layouts/images.html
 pageTitle: Images
@@ -1008,6 +998,8 @@ In a new SASS partial `_carousel.scss`:
 ```css
 .secondary aside {
   ul {
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
     align-content: space-around;
@@ -1046,6 +1038,7 @@ The large image on the images page
 ```css
 figure {
   position: relative;
+  margin: 0;
   figcaption {
     padding: 1rem;
     background: rgba(0, 0, 0, 0.5);
@@ -1053,58 +1046,6 @@ figure {
     position: absolute;
     bottom: 0;
   }
-}
-```
-
-Create a script that will change the main image when a thumbnail is clicked.
-
-```js
-const carouselLinks = document.querySelectorAll(".image-tn a");
-const carousel = document.querySelector("figure img");
-
-carouselLinks.forEach((carouselLink) =>
-  carouselLink.addEventListener("click", runCarousel)
-);
-
-function runCarousel() {
-  const imageHref = this.getAttribute("href");
-  carousel.setAttribute("src", imageHref);
-  event.preventDefault();
-}
-```
-
-Set the text in the figure caption.
-
-Find the appropriate traversal `const titleText = this.firstChild.title`:
-
-```js
-function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute("href");
-  console.log(imageHref);
-  const titleText = event.target.title;
-  console.log(titleText);
-  carousel.setAttribute("src", imageHref);
-  event.preventDefault();
-}
-```
-
-Create a pointer to the figcaption in order to manipulate its content:
-
-```js
-const carouselPara = document.querySelector("figcaption");
-```
-
-Set the innerHTML `carouselPara.innerHTML = titleText` of the paragraph:
-
-```js
-function runCarousel() {
-  const imageHref = event.target.parentNode.getAttribute("href");
-  console.log(imageHref);
-  const titleText = event.target.title;
-  console.log(titleText);
-  carousel.setAttribute("src", imageHref);
-  carouselPara.innerHTML = titleText;
-  event.preventDefault();
 }
 ```
 
@@ -1190,15 +1131,14 @@ function runCarousel() {
 }
 ```
 
-Compare the commented out function. Note how simpler and maintainable delegation is.
-
 ## Forms
 
-Examine the HTML below:
+Create `_includes/components/contact.html` with the following HTML.
 
 ```html
 <form name="contact" method="POST" action="/" autocomplete="true">
   <fieldset>
+    <legend>Enter your info</legend>
     <label for="name">Your name</label>
     <input
       type="text"
@@ -1255,33 +1195,26 @@ Examine the HTML below:
 </form>
 ```
 
-Let's get the form onto our page before we examine it.
+Create a layout `layouts/contact.html` which in turn uses `layouts/layout.html`:
 
-Create `_includes/components/contact.html` with the HTML above.
-
-Create a layout which includes the form, `layouts/contact.html`:
-
-```yml
+```md
 ---
 layout: layouts/layout.html
 ---
-<article>
-{% include components/contact.html %}
-</article>
 
 {{ content }}
+
+<article>{% include components/contact.html %}</article>
 ```
 
 Edit the content `contact.md` to use the new layout:
 
-```yml
+```md
 ---
 layout: layouts/contact.html
 pageTitle: Contact Us
 navTitle: Contact
-date: 2019-04-01
 ---
-## Why contact us?
 
 Not certain if we'll ever get back to you but its worth a try.
 ```
@@ -1293,10 +1226,6 @@ Create and link a new sass partial called `_form.scss`:
 ```css
 form {
   padding: 2em 0;
-}
-
-form label {
-  /* display: none; */
 }
 
 input,
@@ -1361,9 +1290,7 @@ textarea:focus:invalid {
 `<form>`:
 
 - action - specifies where to send the user when a form is submitted
-- autocomplete - specifies whether a form should have autocomplete on or off
 - method - specifies the HTTP method to use when sending form-data
-- name - specifies the name of a form
 - novalidate - turns validation off, typically used when you provide your own custom validations routines
 
 `<fieldset>`:
@@ -1386,8 +1313,8 @@ textarea:focus:invalid {
 `<input>` attributes:
 
 - `name` - Specifies the name of an `<input>` element used to reference form data after a form is submitted
-- `type` - the [most complex](https://www.w3schools.com/tags/att_input_type.asp) attribute, determines the nature of the input
-- `required` - works with native HTML5 validation
+- `type` - the [type](https://www.w3schools.com/tags/att_input_type.asp) attribute determines the nature of the input
+- `required` - the data is requred, works with native HTML5 validation
 - `placeholder` - the text the user sees before typing
 
 Additional input attributes we will be using:
@@ -1397,9 +1324,10 @@ Additional input attributes we will be using:
 
 DELETE THE FORM FIELDS LEAVING ONLY THE BUTTON.
 
-Edit the first field:
+Add the name field:
 
 ```html
+<label for="name">Name</label>
 <input
   type="text"
   name="name"
@@ -1408,16 +1336,14 @@ Edit the first field:
   autocomplete="name"
   title="Please enter your name"
 />
-<label for="name">Name</label>
 ```
 
 Note the tooltip and autocomplete action.
 
-Note that I have placed the labels after the inputs. Placing them before would be more common but we are going to style them.
-
-Edit the second field:
+Add the email field:
 
 ```html
+<label for="email">Email</label>
 <input
   type="email"
   name="email"
@@ -1427,12 +1353,12 @@ Edit the second field:
   pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
   required
 />
-<label for="email">Email</label>
 ```
 
-Edit the textarea:
+Add the textarea:
 
 ```html
+<label for="message">Message</label>
 <textarea
   name="message"
   id="message"
@@ -1440,129 +1366,109 @@ Edit the textarea:
   rows="7"
   required
 ></textarea>
-<label for="message">Message</label>
 ```
 
 Add a data attribute to allow Netlify to process the posting:
 
 ```html
-<form name="contact" method="POST" data-netlify="true" action="/"></form>
+<form name="contact" data-netlify="true" action="/"></form>
 ```
 
 Note: the form will not function correctly on localhost.
 
-In order to run the form locally we might try installing [Netlify Dev](https://www.netlify.com/products/dev/) but for today we'll deploy and test the deployed form.
+(In order to run the form locally we might try installing [Netlify Dev](https://www.netlify.com/products/dev/) but for today we'll deploy and test the deployed form.)
 
-End form:
+Final form:
 
 ```html
-<form name="contact" method="POST" data-netlify="true" action="/">
-  <fieldset>
-    <input
-      type="text"
-      name="name"
-      id="name"
-      autocomplete="name"
-      title="Please enter your name"
-      required
-    />
-    <label for="name">Name</label>
+<form name="contact" data-netlify="true" action="/" autocomplete>
+  <label for="name">Name</label>
+  <input
+    type="text"
+    name="name"
+    id="name"
+    autocomplete="name"
+    title="Please enter your name"
+    required
+  />
 
-    <input
-      type="email"
-      name="email"
-      id="email"
-      autocomplete="email"
-      title="The domain portion of the email address is invalid (the portion after the @)."
-      pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
-      required
-    />
-    <label for="email">Email</label>
+  <label for="email">Email</label>
+  <input
+    type="email"
+    name="email"
+    id="email"
+    autocomplete="email"
+    title="The email address is invalid."
+    pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
+    required
+  />
 
-    <textarea
-      name="message"
-      id="message"
-      placeholder="Write your message here"
-      rows="7"
-      required
-    ></textarea>
-    <label for="message">Message</label>
+  <label for="message">Message</label>
+  <textarea
+    name="message"
+    id="message"
+    placeholder="Write your message here"
+    rows="7"
+    required
+  ></textarea>
 
-    <button type="submit" name="submit">Send Message</button>
-  </fieldset>
+  <button type="submit">Send Message</button>
 </form>
 ```
 
-### CSS for Material Design Form
+### CSS
 
-Label effect:
+Replace all the css in `_form.scss` with:
 
 ```css
 form {
-  display: grid;
   padding: 2em 0;
-  display: block;
-  position: relative;
-}
-
-form label {
-  display: block;
-  position: relative;
-  top: -42px;
-  left: 16px;
-  font-size: 16px;
-  z-index: 1;
-  transition: all 0.3s ease-out;
-}
-
-input:focus + label,
-input:valid + label {
-  top: -80px;
-  font-size: 0.875rem;
-  color: #00aced;
 }
 
 input,
-textarea,
-button {
-  width: 100%;
-  padding: 1em;
-  margin-bottom: 1em;
+textarea {
+  width: 96%;
+  padding: 1rem;
+  margin-bottom: 1rem;
   font-size: 1rem;
 }
 
-input {
-  display: block;
-  position: relative;
-  background: none;
-  border: none;
-  border-bottom: 1px solid $link;
-  font-weight: bold;
-  font-size: 16px;
-  z-index: 2;
-}
-
+input,
 textarea {
-  border: 1px solid $link;
-}
-textarea + label {
-  display: none;
-}
-textarea:focus {
-  outline: none;
-}
-
-input:focus,
-input:valid {
-  outline: none;
-  border-bottom: 1px solid $link;
+  font-family: inherit;
+  border: 1px solid $med-gray;
+  border-radius: 5px;
 }
 
 button {
-  border: 1px solid $link;
   background-color: $link;
   color: #fff;
   cursor: pointer;
+}
+
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 15px lighten($link, 40%);
+}
+
+input:required,
+textarea:required {
+  background-color: lighten($link, 60%);
+}
+
+input:valid,
+textarea:valid {
+  background-color: lighten(green, 60%);
+}
+
+input:invalid,
+textarea:invalid {
+  background-color: lighten(red, 40%);
+}
+
+input:focus:invalid,
+textarea:focus:invalid {
+  background-color: lighten(red, 40%);
 }
 ```
 
