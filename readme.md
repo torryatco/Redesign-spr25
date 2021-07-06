@@ -1268,3 +1268,179 @@ function handleSubmit(event) {
   console.log(" form data ", body);
 }
 ```
+
+## NEW
+
+CSS refresh:
+
+`eleventyConfig.addPassthroughCopy("src/css");`
+
+```js
+"sass": "sass src/scss/styles.scss src/css/styles.css --watch --source-map --style=compressed",
+```
+
+Contact.html
+
+```html
+<form action="/" data-netlify="true" id="myform">
+  <fieldset>
+    <legend>Enter your info</legend>
+
+    <label for="name">Name</label>
+    <input
+      type="text"
+      name="name"
+      id="name"
+      value="Daniel"
+      required
+      autocomplete="name"
+      title="Please enter your name"
+    />
+
+    <div style="margin: 1rem 0">
+      <label for="selectMe">Select a Profession</label>
+      <select name="selectme" id="selectMe">
+        <option value="doctor">Doctor</option>
+        <option value="lawyer">Lawyer</option>
+        <option value="beggarman">Beggarman</option>
+        <option value="thief">Thief</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="vehicle1"> I have a bike</label>
+      <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" />
+
+      <label for="vehicle2"> I have a car</label>
+      <input type="checkbox" id="vehicle2" name="vehicle2" value="Car" />
+    </div>
+
+    <div>
+      <label for="vehiclePref1"> I prefer a bike</label>
+      <input
+        type="radio"
+        id="vehiclePref1"
+        name="vehiclePref"
+        value="Bike"
+        checked
+      />
+      <label for="vehiclePref2"> I prefer a car</label>
+      <input type="radio" id="vehiclePref2" name="vehiclePref" value="Car" />
+    </div>
+
+    <div>
+      <input list="browsers" name="browser" />
+      <datalist id="browsers">
+        <option value="Firefox"></option>
+        <option value="Chrome"></option>
+        <option value="Opera"></option>
+        <option value="Safari"></option>
+      </datalist>
+    </div>
+
+    <label for="email">Email</label>
+    <input
+      type="email"
+      name="email"
+      id="email"
+      value="daniel@nyu.edu"
+      autocomplete="email"
+      title="The domain portion of the email address is invalid (the portion after the @)."
+      pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
+      required
+    />
+
+    <label for="message">Your message</label>
+    <textarea
+      name="message"
+      id="message"
+      placeholder="Your message"
+      rows="7"
+      required
+    >
+Just testing</textarea
+    >
+
+    <button type="submit" name="submit">Send Message</button>
+    <button type="reset" name="reset">Reset</button>
+  </fieldset>
+</form>
+```
+
+`_form.scss`
+
+```css
+form {
+  padding: 2em 0;
+}
+
+label {
+  display: block;
+}
+
+input,
+textarea {
+  width: 90%;
+  padding: 1em;
+  margin-bottom: 1em;
+  border: 1px solid $med-gray;
+  border-radius: 5px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline;
+  width: auto;
+}
+
+button {
+  padding: 6px;
+  border: 1px solid $link;
+  background-color: $link;
+  color: #fff;
+  cursor: pointer;
+}
+
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 15px lighten($link, 40%);
+}
+
+input:required,
+textarea:required {
+  background-color: lighten($link, 60%);
+}
+
+input:valid,
+textarea:valid {
+  background-color: lighten(green, 60%);
+}
+
+input:focus:invalid,
+textarea:focus:invalid {
+  background-color: lighten(red, 40%);
+}
+```
+
+Scripts.js
+
+```js
+document.addEventListener("submit", handleSubmit);
+
+function handleSubmit(event) {
+  event.preventDefault();
+  // The Object.fromEntries() method transforms a list of key-value pairs into an object.
+  // The FormData interface constructs a set of key/value pairs representing form fields and their values
+  const formData = Object.fromEntries(new FormData(event.target));
+  console.log(" form data ", formData);
+  fetch(`http://localhost:3456/api`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify(formData),
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data));
+}
+```
