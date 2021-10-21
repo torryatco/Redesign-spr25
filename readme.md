@@ -2,45 +2,33 @@
 
 - [Redesign](#redesign)
   - [Homework](#homework)
-  - [Reading](#reading)
   - [Exercise - A Site Redesign](#exercise---a-site-redesign)
   - [GIT](#git)
   - [Deployment](#deployment)
-  - [Setup and Navigation](#setup-and-navigation)
+  - [LocalStorage and SessionStorage](#localstorage-and-sessionstorage)
+  - [Active Class for the Navigation](#active-class-for-the-navigation)
   - [Header](#header)
   - [SASS](#sass)
-    - [Aside: Using Live SASS Compiler in VS Code](#aside-using-live-sass-compiler-in-vs-code)
     - [Nesting SASS](#nesting-sass)
     - [Media Query - Mobile First](#media-query---mobile-first)
     - [Variables](#variables)
   - [Responsive Main Nav](#responsive-main-nav)
     - [Show/Hide Nav](#showhide-nav)
     - [Large Screen](#large-screen)
-  - [Video Component](#video-component)
-    - [Getting and Setting HTML Attributes](#getting-and-setting-html-attributes)
-    - [Updating the Video](#updating-the-video)
   - [Create Posts](#create-posts)
-  - [Subtemplates](#subtemplates)
-  - [Note: fall2019 - continue on the video scripting above.](#note-fall2019---continue-on-the-video-scripting-above)
-    - [Image Carousel](#image-carousel)
+  - [Videos Component](#videos-component)
+  - [Image Carousel](#image-carousel)
     - [Content Slider](#content-slider)
   - [Event Delegation](#event-delegation)
   - [Forms](#forms)
     - [Form CSS](#form-css)
     - [Form Elements](#form-elements)
-    - [CSS for Material Design Form](#css-for-material-design-form)
-  - [Content Management](#content-management)
   - [Notes](#notes)
+  - [NEW](#new)
 
 ## Homework
 
 Prepare your final project.
-
-## Reading
-
-- [Using Git, Github and 11ty](https://youtu.be/PqlhYVqLDm0) together to create a simple site.
-- Also [Oh Shit Git](https://ohshitgit.com)
-- and don't forget the [11ty](https://www.11ty.io/docs/templates/) documentation
 
 ## Exercise - A Site Redesign
 
@@ -73,7 +61,7 @@ $ git commit -m 'Initial commit'
 Run the project:
 
 ```sh
-$ npm run eleventy
+$ npm run start
 ```
 
 And open the site in Chrome.

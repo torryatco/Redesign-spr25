@@ -1,6 +1,7 @@
 ---
 pageTitle: Images
 navTitle: Images
+pageClass: pictures
 date: 2019-02-01
 images:
   - apples.png

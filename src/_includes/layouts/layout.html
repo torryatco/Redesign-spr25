@@ -5,11 +5,11 @@
   <body class="{{ pageClass }}">
     {% include components/nav.html %}
 
-    <div class="content">
+    <main class="content" tabindex="-1">
       <h1>{{ pageTitle }}</h1>
 
       {{ content }}
-    </div>
+    </main>
 
     <script src="/js/scripts.js"></script>
   </body>
