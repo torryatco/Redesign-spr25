@@ -3,12 +3,10 @@
 - [Redesign](#redesign)
   - [Homework](#homework)
   - [Exercise - A Site Redesign](#exercise---a-site-redesign)
-  - [GIT](#git)
-  - [Deployment](#deployment)
   - [LocalStorage and SessionStorage](#localstorage-and-sessionstorage)
-  - [Active Class for the Navigation](#active-class-for-the-navigation)
+    - [Using Local Storage with TTL](#using-local-storage-with-ttl)
   - [Header](#header)
-  - [SASS](#sass)
+  - [Active Class for the Navigation](#active-class-for-the-navigation)
     - [Nesting SASS](#nesting-sass)
     - [Media Query - Mobile First](#media-query---mobile-first)
     - [Variables](#variables)
@@ -47,63 +45,13 @@ We will be using many of the files and techniques we looked at last week. Before
 - `.eleventy.js` - passthroughs for images and JS but not css
 - `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `dist` folder but will instead render to the top level (i.e. it becomes `index.html`). Therefore `<li><a href="/">Home</a></li>` has been removed from the navigation as it is no longer necessary.
 
-## GIT
-
-Initialize the repository
-
-```sh
-$ cd <project directory>
-$ git init
-$ git add .
-$ git commit -m 'Initial commit'
-```
-
-Run the project:
-
-```sh
-$ npm run start
-```
-
-And open the site in Chrome.
-
-Create a new Github repo and add the remote origin to the repo following the instructions on Github.
-
-```sh
-$ git add <your repo name as per the instructions on Github>
-$ git push -u origin main
-```
-
-## Deployment
-
-We'll use [Netlify](https://www.netlify.com/) to put this on the web. Register and/or log in to [app.netlify.com](https://app.netlify.com) and drag and drop the `dist` folder onto the web browser window to upload the contents [live to the web](https://zealous-kilby-113356.netlify.com/).
-
-We can also hook into a Github branch to set up [continuous delpoyment](https://app.netlify.com/start). Here is a [sample](https://agitated-bartik-814348.netlify.com/) with [admin](https://agitated-bartik-814348.netlify.com/admin).
-
-- use the terminal to create and checkout a new branch
-
-```sh
-$ git branch dev
-$ git checkout dev
-```
-
-In the future you will be able to merge your dev branch with the master branch, push it to Github and have your site updated automatically.
-
-Make sure the branch is clean, then checkout the main (master) branch and push to Github. Netlify will take over from there - running the eleventy command to create a `dist` folder and putting that on its CDN.
-
-```sh
-$ git add .
-$ git commit -m 'commit message'
-$ git checkout master
-$ git push -u origin master
-```
-
 ## LocalStorage and SessionStorage
 
 It seems excessive to check the NY Times API every time we go to the home page.
 
-The localStorage and sessionStorage APIs let you store data locally in the browser. You can use the local storage API to store data locally that the browser can access later.
+The localStorage and sessionStorage browser APIs let you store data locally in the browser. You use the storage APIs to store data that the browser can access later.
 
-Data is stored indefinitely, and must be a string.
+Data is stored indefinitely, and it must be a string.
 
 ```js
 // Store data
@@ -157,27 +105,70 @@ if (document.querySelector(".home")) {
 }
 ```
 
-<!--
-```
+### Using Local Storage with TTL
+
+Adapted from [https://www.sohamkamani.com/blog/javascript-localstorage-with-ttl-expiry/](https://www.sohamkamani.com/blog/javascript-localstorage-with-ttl-expiry/)
+
+```js
+// store the link plus the API key in a variable
 const key = "uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
 const API = `https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=${key}`;
 const storagePrefix = "nyt-autosave";
 
+function setWithExpiry(key, value, ttl) {
+  const now = new Date();
+  // `item` is an object which contains the original value
+  // as well as the time when it's supposed to expire
+  const item = {
+    value: value,
+    expiry: now.getTime() + ttl,
+  };
+  localStorage.setItem(key, JSON.stringify(item));
+}
+
+function getWithExpiry(key) {
+  const itemStr = localStorage.getItem(key);
+  // if the item doesn't exist, return null
+  if (!itemStr) {
+    console.log("no item string");
+    return null;
+  }
+  console.log("item string found!", itemStr);
+  const item = JSON.parse(itemStr);
+  const now = new Date();
+  // compare the expiry time of the item with the current time
+  if (now.getTime() > item.expiry) {
+    // If the item is expired, delete the item from storage
+    // and return null
+    localStorage.removeItem(key);
+    return null;
+  }
+  return item.value;
+}
+
 function getStories() {
-  fetch(API)
-    .then((response) => response.json())
-    .then((data) => showData(data.results));
+  const value = getWithExpiry(storagePrefix);
+  if (!value) {
+    console.log(" expired - fetching again ");
+    fetch(API)
+      .then((response) => response.json())
+      .then((data) => showData(data.results));
+  } else {
+    document.querySelector(".stories").innerHTML = value;
+  }
 }
 
 function showData(stories) {
-  var looped = stories
+  const looped = stories
     .map(
       (story) => `
     <div class="item">
-    <picture>
-    <img src="${story.multimedia[2].url}" alt="" />
-    <caption>${story.multimedia[2]?.caption}</caption>
-    </picture>
+    <img src="${story.multimedia ? story.multimedia[2].url : ""}" alt="${
+        story.multimedia ? story.multimedia[2]?.caption : ""
+      }" />
+    <figcaption>${
+      story.multimedia ? story.multimedia[2]?.caption : ""
+    }</figcaption>
       <h3><a href="${story.url}">${story.title}</a></h3>
       <p>${story.abstract}</p>
     </div>
@@ -185,38 +176,23 @@ function showData(stories) {
     )
     .join("");
 
-  sessionStorage.setItem(storagePrefix, looped);
   document.querySelector(".stories").innerHTML = looped;
+  setWithExpiry(storagePrefix, looped, 1000 * 60);
 }
 
 if (document.querySelector(".home")) {
-  var saved = sessionStorage.getItem(storagePrefix);
-  if (saved) {
-    console.log("loading from sessionStorage");
-    document.querySelector(".stories").innerHTML = saved;
-  } else {
-    console.log("fetching from nytimes");
-    getStories();
-  }
+  getStories();
 }
-
 ```
- -->
 
-## Active Class for the Navigation
-
-Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
+Use modules:
 
 ```html
-<nav>
-  <ul>
-    {% for nav in collections.nav %}
-    <li class="{% if nav.url == page.url %} active{% endif %}">
-      <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
-    </li>
-    {%- endfor -%}
-  </ul>
-</nav>
+<script type="module" src="/js/scripts.js"></script>
+```
+
+```js
+import { setWithExpiry, getWithExpiry } from "./modules/localStorageHelpers.js";
 ```
 
 ## Header
@@ -228,41 +204,21 @@ Add the first component to `layout.html` after the nav include, e.g.:
 {% include components/header.html %}
 ```
 
-## SASS
+## Active Class for the Navigation
 
-Stop 11ty processing and install sass:
+Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
 
-```sh
-$ npm i -D sass
+```html
+<nav aria-label="Primary">
+  <ul>
+    {% for nav in collections.nav %}
+    <li class="{% if nav.url == page.url %} active{% endif %}">
+      <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
+    </li>
+    {%- endfor -%}
+  </ul>
+</nav>
 ```
-
-Note: `i` is short for `install` and `-D` is short for `--save-dev`
-
-Add scripts to the manifest:
-
-```js
-  "scripts": {
-    "eleventy": "eleventy --serve",
-    "sass": "sass src/scss/styles.scss dist/css/styles.css --watch --source-map",
-    "start": "npm run eleventy & npm run sass"
-  },
-```
-
-CSS minifcation can be added since the `dist` folder is our production version
-
-`"sass": "sass src/scss/styles.scss dist/css/styles.css --watch --source-map --style=compressed",`
-
-Restart (`npm start`) the processes.
-
-Copy and paste the contents of `styles.css` to `_base.scss`.
-
-Include the sass partial in `styles.scss`
-
-```css
-@import "imports/base";
-```
-
-Note: since we are compiling the scss directly to the `dist` folder, there is no need for a css passthrough in `.eleventy.js`.
 
 ### Nesting SASS
 
@@ -340,17 +296,6 @@ p {
 }
 ```
 
-Git add, commit, merge and push the branch to deploy the changes.
-
-```sh
-$ git add .
-$ git commit -m 'added header'
-$ git status
-$ git checkout master
-$ git merge dev
-$ git push -u origin master
-```
-
 ### Variables
 
 Create `_variables.scss` in `scss/imports` with:
@@ -421,7 +366,8 @@ We will use this to show a menu on small screens.
 
 - create a sass partial `_nav.scss`
 - import it into `styles.css` with `@import 'imports/nav';`
-- IMPORTANT - remove all references to nav in `_base.scss`
+
+IMPORTANT - remove all references to nav in `_base.scss`
 
 Small screen first - show and format the hamburger menu:
 
@@ -531,7 +477,7 @@ Note that the content shifts down when the nav is visible.
 }
 ```
 
-We can use flex wiith a column direction instead of display block:
+We can use flex with a column direction instead of display block:
 
 ```css
 .show-nav nav ul {
@@ -600,8 +546,6 @@ The complex selector with the ampersand compiles to `nav li:hover:not(.active)`.
 Check the navigation on both sizes and make adjustments as necessary.
 
 Note: if we were making a single page app (SPA) we would have to code the menu to disappear when a selection was made. But because we are actually navigating to a new URL, the menu collapses naturally.
-
-<!-- HERE 2021 -->
 
 ## Create Posts
 
