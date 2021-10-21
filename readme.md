@@ -623,7 +623,7 @@ pageClass: blog
 
 In order to create the videos page we will leverage a subtemplate - a template that uses another template.
 
-Create `videos.html` in `layouts`:
+Create `videos.html` in `_includes/layouts`:
 
 ```md
 ---
@@ -633,7 +633,7 @@ layout: layouts/layout.html
 <section>{% include components/video.html %}</section>
 ```
 
-In `videos.md` add `pageClass: videos` to the front matter.
+In `pages/videos.md` add `pageClass: videos` to the front matter.
 
 ```md
 ---
@@ -813,7 +813,7 @@ layout: layouts/layout.html
 {% include components/images.html %}
 ```
 
-In `images.md`
+In `pages/images.md`
 
 ```md
 ---
@@ -855,16 +855,6 @@ In a new SASS partial `_carousel.scss`:
 ```
 
 Note the transition:
-
-```css
-li img {
-	...
-	transition: all 0.2s linear;
-	&:hover {
-		transform: scale(1.1);
-		box-shadow: 1px 1px 1px rgba(0,0,0,0.4);
-	}
-```
 
 ### Content Slider
 
@@ -908,17 +898,17 @@ We are getting the image node.
 Block the default event on the click and call a new `runCarousel` function:
 
 ```js
-function clickHandlers() {
+function clickHandlers(event) {
   if (event.target.matches("#pull")) {
-    showMenu();
+    showMenu(event);
     event.preventDefault();
   }
   if (event.target.matches(".content-video a")) {
-    videoSwitch();
+    videoSwitch(event);
     event.preventDefault();
   }
   if (event.target.matches(".image-tn img")) {
-    runCarousel();
+    runCarousel(event);
     event.preventDefault();
   }
 }
@@ -933,7 +923,8 @@ function runCarousel(event) {
 }
 ```
 
-Correct the error by passing the event to the runCarousel function.
+<!--
+Correct the error by passing the event to the runCarousel function. -->
 
 Our clicks now capture the href value of the linked thumbnails.
 
@@ -1035,7 +1026,7 @@ layout: layouts/layout.html
 <article>{% include components/contact.html %}</article>
 ```
 
-Edit the content `contact.md` to use the new layout:
+Edit the content `pages/contact.md` to use the new layout:
 
 ```md
 ---
