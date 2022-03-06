@@ -6,11 +6,11 @@
   - [LocalStorage and SessionStorage](#localstorage-and-sessionstorage)
     - [Using Local Storage with TTL](#using-local-storage-with-ttl)
   - [Header](#header)
-  - [Active Class for the Navigation](#active-class-for-the-navigation)
     - [Nesting SASS](#nesting-sass)
     - [Media Query - Mobile First](#media-query---mobile-first)
     - [Variables](#variables)
   - [Responsive Main Nav](#responsive-main-nav)
+    - [Active Class for the Navigation](#active-class-for-the-navigation)
     - [Show/Hide Nav](#showhide-nav)
     - [Large Screen](#large-screen)
   - [Create Posts](#create-posts)
@@ -31,8 +31,6 @@ Prepare your final project.
 ## Exercise - A Site Redesign
 
 Our hypothetical company has a site the looks outdated, is not responsive and needs to be broken up into multiple pages.
-
-[Here](http://oit2.scps.nyu.edu/~devereld/session8/app/) is what their site looks like.
 
 ![site](ignore/other/wide.png)
 
@@ -147,14 +145,15 @@ function getWithExpiry(key) {
 }
 
 function getStories() {
-  const value = getWithExpiry(storagePrefix);
-  if (!value) {
-    console.log(" expired - fetching again ");
+  const stories = getWithExpiry(storagePrefix);
+  if (!stories) {
+    console.warn(" stories expired - fetching again ");
     fetch(API)
       .then((response) => response.json())
       .then((data) => showData(data.results));
   } else {
-    document.querySelector(".stories").innerHTML = value;
+    console.warn(" stories not expired - no fetching ");
+    document.querySelector(".stories").innerHTML = stories;
   }
 }
 
@@ -202,22 +201,6 @@ Add the first component to `layout.html` after the nav include, e.g.:
 ```
 {% include components/nav.html %}
 {% include components/header.html %}
-```
-
-## Active Class for the Navigation
-
-Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
-
-```html
-<nav aria-label="Primary">
-  <ul>
-    {% for nav in collections.nav %}
-    <li class="{% if nav.url == page.url %} active{% endif %}">
-      <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
-    </li>
-    {%- endfor -%}
-  </ul>
-</nav>
 ```
 
 ### Nesting SASS
@@ -350,6 +333,22 @@ header {
 ```
 
 ## Responsive Main Nav
+
+### Active Class for the Navigation
+
+Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
+
+```html
+<nav aria-label="Primary">
+  <ul>
+    {% for nav in collections.nav %}
+    <li class="{% if nav.url == page.url %} active{% endif %}">
+      <a href="{{ nav.url | url }}">{{ nav.data.navTitle }}</a>
+    </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+```
 
 Add a link `<a href="#" id="pull"></a>` to the nav:
 
