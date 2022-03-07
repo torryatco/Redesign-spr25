@@ -1,8 +1,15 @@
 # Redesign
 
+<!-- upgrade 11ty in package and quote includes
+{% include "components/head.html" %}
+home.md outside of pages
+working key - pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j
+-->
+
 - [Redesign](#redesign)
   - [Homework](#homework)
   - [Exercise - A Site Redesign](#exercise---a-site-redesign)
+  - [Environment Variables](#environment-variables)
   - [LocalStorage and SessionStorage](#localstorage-and-sessionstorage)
     - [Using Local Storage with TTL](#using-local-storage-with-ttl)
   - [Header](#header)
@@ -34,7 +41,7 @@ Our hypothetical company has a site the looks outdated, is not responsive and ne
 
 ![site](ignore/other/wide.png)
 
-We will be using many of the files and techniques we looked at last week. Before beginning, examine the files.
+We will be starting out with many of the same files and techniques we looked at previously. Before beginning, examine the files.
 
 - `.gitignore` - includes the `dist` directory
 - `pages` - our base directory
@@ -42,6 +49,14 @@ We will be using many of the files and techniques we looked at last week. Before
 - `.eleventyignore` - instructs 11ty to not process `readme.md` (this file) and the ignore directory
 - `.eleventy.js` - passthroughs for images and JS but not css
 - `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `dist` folder but will instead render to the top level (i.e. it becomes `index.html`). Therefore `<li><a href="/">Home</a></li>` has been removed from the navigation as it is no longer necessary.
+
+## Environment Variables
+
+`pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j`
+
+```
+NYTAPI=pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j
+```
 
 ## LocalStorage and SessionStorage
 
