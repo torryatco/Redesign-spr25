@@ -1,5 +1,7 @@
 # Redesign Project
 
+- https://nicholson-jiang-2021-yearbook.netlify.app/ =//= https://github.com/amyjiangsu/nicholson_jiang_2021_yearbook
+
 <!-- https://webkit.org/blog/12209/introducing-the-dialog-element/
 -->
 
