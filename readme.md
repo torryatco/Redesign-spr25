@@ -1,35 +1,7 @@
-# Redesign
+# Redesign Project
 
-<!-- upgrade 11ty in package and quote includes
-{% include "components/head.html" %}
-home.md outside of pages
-working key - pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j
+<!-- https://webkit.org/blog/12209/introducing-the-dialog-element/
 -->
-
-- [Redesign](#redesign)
-  - [Homework](#homework)
-  - [Exercise - A Site Redesign](#exercise---a-site-redesign)
-  - [Environment Variables](#environment-variables)
-  - [LocalStorage and SessionStorage](#localstorage-and-sessionstorage)
-    - [Using Local Storage with TTL](#using-local-storage-with-ttl)
-  - [Header](#header)
-    - [Nesting SASS](#nesting-sass)
-    - [Media Query - Mobile First](#media-query---mobile-first)
-    - [Variables](#variables)
-  - [Responsive Main Nav](#responsive-main-nav)
-    - [Active Class for the Navigation](#active-class-for-the-navigation)
-    - [Show/Hide Nav](#showhide-nav)
-    - [Large Screen](#large-screen)
-  - [Create Posts](#create-posts)
-  - [Videos Component](#videos-component)
-  - [Image Carousel](#image-carousel)
-    - [Content Slider](#content-slider)
-  - [Event Delegation](#event-delegation)
-  - [Forms](#forms)
-    - [Form CSS](#form-css)
-    - [Form Elements](#form-elements)
-  - [Notes](#notes)
-  - [NEW](#new)
 
 ## Homework
 
@@ -48,21 +20,27 @@ We will be starting out with many of the same files and techniques we looked at 
 - `layouts` - our `layout.html` file now references partials via `include`
 - `.eleventyignore` - instructs 11ty to not process `readme.md` (this file) and the ignore directory
 - `.eleventy.js` - passthroughs for images and JS but not css
-- `home.md` has a permalink (`/`) in the front matter which means it will not render to its own directory in the `dist` folder but will instead render to the top level (i.e. it becomes `index.html`). Therefore `<li><a href="/">Home</a></li>` has been removed from the navigation as it is no longer necessary.
+- `home.md` has a permalink (`/`) in the front matter which means it will always render to the top level (i.e. it becomes `/_site/index.html`)
 
-## Environment Variables
+<!-- ## Environment Variables
 
 `pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j`
 
 ```
 NYTAPI=pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j
-```
+``` -->
 
 ## LocalStorage and SessionStorage
 
 It seems excessive to check the NY Times API every time we go to the home page.
 
-The localStorage and sessionStorage browser APIs let you store data locally in the browser. You use the storage APIs to store data that the browser can access later.
+The localStorage and sessionStorage browser APIs let you preristently store data locally in the browser. You use the storage APIs to store data that the browser can access later.
+
+Some examples include:
+
+- storing user settings offline for a website, such as enabling dark mode
+- remembering user search history
+- remembering items in shopping cart
 
 Data is stored indefinitely, and it must be a string.
 
@@ -70,13 +48,16 @@ Data is stored indefinitely, and it must be a string.
 // Store data
 var someData = "The data that I want to store for later.";
 localStorage.setItem("myDataKey", someData);
-
+// refresh and someData is undefined
 // Get data
 var data = localStorage.getItem("myDataKey");
-
 // Remove data
 localStorage.removeItem("myDatakey");
+// returns null not undefined
+var data = localStorage.getItem("myDataKey");
 ```
+
+The data is persistent. You can close the browser and it will still be available the next time the user accesses the site.
 
 Session storage works just like localStorage, except the data is cleared when the browser session ends.
 
@@ -84,15 +65,13 @@ Session storage works just like localStorage, except the data is cleared when th
 // Store data
 var someTempData = "The data that I want to store temporarily.";
 sessionStorage.setItem("myTempDataKey", someTempData);
-
 // Get data
 var tempData = sessionStorage.getItem("myTempDataKey");
-
 // Remove data
 sessionStorage.removeItem("myTempDatakey");
 ```
 
-Browsers provide differing levels of storage space for localStorage and sessionStorage, ranging from as little as 2mb up to unlimited. Try to reduce the overall footprint of your data as much as possible.
+Browsers provide differing levels of storage space for localStorage and sessionStorage, averaging around 5mb.
 
 We begin by creating a key for our nytimes data and then checking for the data in local storage. If it exists then we'll use that data. Otherwise we'll fetch the data from the nytimes api:
 
@@ -118,7 +97,7 @@ if (document.querySelector(".home")) {
 }
 ```
 
-### Using Local Storage with TTL
+### Using Local Storage with TTL (Time To Live)
 
 Adapted from [https://www.sohamkamani.com/blog/javascript-localstorage-with-ttl-expiry/](https://www.sohamkamani.com/blog/javascript-localstorage-with-ttl-expiry/)
 
@@ -205,22 +184,63 @@ Use modules:
 <script type="module" src="/js/scripts.js"></script>
 ```
 
+Create `js/modules/localStorageHelpers.js`
+
+Cut and paste the setWithExpiry and getWithExpiry functions into the new file and export them:
+
+```js
+export function setWithExpiry(key, value, ttl) {
+  const now = new Date();
+  // `item` is an object which contains the original value
+  // as well as the time when it's supposed to expire
+  const item = {
+    value: value,
+    expiry: now.getTime() + ttl,
+  };
+  localStorage.setItem(key, JSON.stringify(item));
+}
+
+export function getWithExpiry(key) {
+  const itemStr = localStorage.getItem(key);
+  // if the item doesn't exist, return null
+  if (!itemStr) {
+    console.log("no item string");
+    return null;
+  }
+  // console.log("item string found!", itemStr);
+  const item = JSON.parse(itemStr);
+  const now = new Date();
+  // compare the expiry time of the item with the current time
+  if (now.getTime() > item.expiry) {
+    // If the item is expired, delete the item from storage
+    // and return null
+    localStorage.removeItem(key);
+    return null;
+  }
+  return item.value;
+}
+```
+
+Import them into scripts.js:
+
 ```js
 import { setWithExpiry, getWithExpiry } from "./modules/localStorageHelpers.js";
 ```
+
+And test.
 
 ## Header
 
 Add the first component to `layout.html` after the nav include, e.g.:
 
 ```
-{% include components/nav.html %}
-{% include components/header.html %}
+{% include "components/nav.html" %}
+{% include "components/header.html" %}
 ```
 
 ### Nesting SASS
 
-Add header CSS to a new `_header.scss` file using nesting:
+Add header CSS to the `_header.scss` file in `scss/imports` using nesting:
 
 ```css
 header {
@@ -248,8 +268,6 @@ header {
 }
 ```
 
-Examine the resulting css file. Note the minification and mapping.
-
 Inspect the header in the developer tools and note that _mapping_ maps the css line numbers to the scss line numbers
 
 ### Media Query - Mobile First
@@ -266,7 +284,7 @@ Normally this would be written as:
 }
 ```
 
-But because we are nesting with sass we can simply write (in `_header.scss`):
+Because we are nesting with sass we can simply write (in `_header.scss`):
 
 ```css
 p {
@@ -296,9 +314,9 @@ p {
 
 ### Variables
 
-Create `_variables.scss` in `scss/imports` with:
+In `scss/imports/_variables.scss`:
 
-```
+```scss
 $break-sm: 480px;
 $break-med: 768px;
 $break-wide: 980px;
@@ -378,8 +396,7 @@ Add a link `<a href="#" id="pull"></a>` to the nav:
 
 We will use this to show a menu on small screens.
 
-- create a sass partial `_nav.scss`
-- import it into `styles.css` with `@import 'imports/nav';`
+- import `_nav.scss` into `styles.css` with `@import 'imports/nav';`
 
 IMPORTANT - remove all references to nav in `_base.scss`
 
@@ -540,7 +557,7 @@ nav ul {
 
 Format the flex children with `flex-grow` to allow the li's to expand.
 
-```css
+```scss
 // nav li:hover:not(.active) {
 //   background-color: lighten($link, 10%);
 // }
@@ -603,7 +620,7 @@ Bring to the table win-win survival strategies to ensure proactive domination. A
 Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. Override the digital divide with additional clickthroughs from DevOps. Nanotechnology immersion along the information highway will close the loop on focusing solely on the bottom line.
 ```
 
-Create `posts.json`:
+Create `posts/posts.json`:
 
 ```js
 {
@@ -644,7 +661,7 @@ Create `videos.html` in `_includes/layouts`:
 layout: layouts/layout.html
 ---
 
-<section>{% include components/video.html %}</section>
+<section>{% include "components/video.html" %}</section>
 ```
 
 In `pages/videos.md` add `pageClass: videos` to the front matter.
@@ -742,7 +759,7 @@ function clickHandlers(event) {
     event.preventDefault();
   }
   if (event.target.matches(".content-video a")) {
-    videoSwitch();
+    videoSwitch(event);
     event.preventDefault();
   }
 }
@@ -794,7 +811,7 @@ In `layouts/videos.html`:
 layout: layouts/layout.html
 ---
 
-<section>{% include components/video.html %}</section>
+<section>{% include "components/video.html" %}</section>
 
 {{ content }}
 ```
@@ -824,7 +841,7 @@ Add a new layout file `images.html` to `_includes/layouts`:
 layout: layouts/layout.html
 ---
 
-{% include components/images.html %}
+{% include "components/images.html" %}
 ```
 
 In `pages/images.md`
