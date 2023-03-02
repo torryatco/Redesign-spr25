@@ -1,10 +1,5 @@
 # Redesign Project
 
-- https://nicholson-jiang-2021-yearbook.netlify.app/ =//= https://github.com/amyjiangsu/nicholson_jiang_2021_yearbook
-
-<!-- https://webkit.org/blog/12209/introducing-the-dialog-element/
--->
-
 ## Homework
 
 Prepare your final project.
@@ -17,20 +12,12 @@ Our hypothetical company has a site the looks outdated, is not responsive and ne
 
 We will be starting out with many of the same files and techniques we looked at previously. Before beginning, examine the files.
 
-- `.gitignore` - includes the `dist` directory
+- `.gitignore` - includes the `_site` directory
 - `pages` - our base directory
 - `layouts` - our `layout.html` file now references partials via `include`
 - `.eleventyignore` - instructs 11ty to not process `readme.md` (this file) and the ignore directory
 - `.eleventy.js` - passthroughs for images and JS but not css
-- `home.md` has a permalink (`/`) in the front matter which means it will always render to the top level (i.e. it becomes `/_site/index.html`)
-
-<!-- ## Environment Variables
-
-`pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j`
-
-```
-NYTAPI=pb3WbIQux4hi9ZGGD38jXNA1K5gjBt6j
-``` -->
+- `home.md` has a new front matter variable: permalink (`/`) in the front matter which means it will always render to the top level (i.e. it becomes `/_site/index.html`)
 
 ## LocalStorage and SessionStorage
 
@@ -47,16 +34,10 @@ Some examples include:
 Data is stored indefinitely, and it must be a string.
 
 ```js
-// Store data
-var someData = "The data that I want to store for later.";
-localStorage.setItem("myDataKey", someData);
-// refresh and someData is undefined
-// Get data
-var data = localStorage.getItem("myDataKey");
-// Remove data
-localStorage.removeItem("myDatakey");
-// returns null not undefined
-var data = localStorage.getItem("myDataKey");
+var value = "good";
+localStorage.setItem("test", value); // set the item
+localStorage.getItem("test"); // retrieve the item
+localStorage.removeItem("test"); // delete the item
 ```
 
 The data is persistent. You can close the browser and it will still be available the next time the user accesses the site.
@@ -64,12 +45,9 @@ The data is persistent. You can close the browser and it will still be available
 Session storage works just like localStorage, except the data is cleared when the browser session ends.
 
 ```js
-// Store data
-var someTempData = "The data that I want to store temporarily.";
-sessionStorage.setItem("myTempDataKey", someTempData);
-// Get data
-var tempData = sessionStorage.getItem("myTempDataKey");
-// Remove data
+var value = "The data that I want to store temporarily.";
+sessionStorage.setItem("myTempDataKey", value);
+sessionStorage.getItem("myTempDataKey");
 sessionStorage.removeItem("myTempDatakey");
 ```
 
@@ -186,7 +164,7 @@ Use modules:
 <script type="module" src="/js/scripts.js"></script>
 ```
 
-Create `js/modules/localStorageHelpers.js`
+Create `src/js/modules/localStorageHelpers.js`
 
 Cut and paste the setWithExpiry and getWithExpiry functions into the new file and export them:
 
@@ -242,7 +220,7 @@ Add the first component to `layout.html` after the nav include, e.g.:
 
 ### Nesting SASS
 
-Add header CSS to the `_header.scss` file in `scss/imports` using nesting:
+Add header CSS to the `_header.scss` file in `scss/imports` and import it into `styles.scss`:
 
 ```css
 header {
@@ -956,9 +934,6 @@ function runCarousel(event) {
 }
 ```
 
-<!--
-Correct the error by passing the event to the runCarousel function. -->
-
 Our clicks now capture the href value of the linked thumbnails.
 
 Capture the title text:
@@ -985,7 +960,7 @@ function runCarousel(event) {
 
 ## Forms
 
-Create `_includes/components/contact.html` with the following HTML.
+Create `src/_includes/components/contact.html` with the following HTML.
 
 ```html
 <form name="contact" method="POST" action="/" autocomplete="true">
@@ -1047,7 +1022,7 @@ Create `_includes/components/contact.html` with the following HTML.
 </form>
 ```
 
-Create a layout `layouts/contact.html` which in turn uses `layouts/layout.html`:
+Create a layout `src/_includes/layouts/contact.html` (which in turn uses `layouts/layout.html`):
 
 ```md
 ---
@@ -1056,7 +1031,7 @@ layout: layouts/layout.html
 
 {{ content }}
 
-<article>{% include components/contact.html %}</article>
+<article>{% include "components/contact.html" %}</article>
 ```
 
 Edit the content `pages/contact.md` to use the new layout:
