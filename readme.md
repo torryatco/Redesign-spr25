@@ -1187,6 +1187,57 @@ Note: the form will not function correctly on localhost.
 
 ## Notes
 
+Redering multiple pages from data.
+
+products.json in _data folder
+
+```js
+[
+	{ "name": "Electric toasters ", "price": 2.99, "description": "something", "shippingTimeInDays":9 },
+	{ "name": "goo", "price": 9.99, "description": "something else", "shippingTimeInDays":8 },
+	{ "name": "zoo", "price": 1.50, "description": "something more", "shippingTimeInDays":10 }
+]
+```
+
+```
+<ul>
+{% for product in products %}
+	<li><a href="/product/{{product.name | slug}}">{{product.name}}</a></li>
+{% endfor %}
+</ul>
+```
+
+Using pagination
+
+```html
+---
+layout: "layouts/layout.html"
+tags: "products"
+pagination:
+   data: products
+   size: 1
+   alias: product
+permalink: "/product/{{product.name | slug}}/"
+eleventyComputed:
+   title: "{{product.name}}"
+---
+
+
+<h2>{{ product.name }}</h2>
+
+<p>
+{{product.description}}
+</p>
+
+<p>
+It costs ${{product.price}} and ships in {{product.shippingTimeInDays}} days.
+</p>
+
+
+```
+
+---
+
 ```js
 document.addEventListener("submit", handleSubmit);
 
