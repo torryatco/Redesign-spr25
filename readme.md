@@ -23,7 +23,7 @@ We will be starting out with many of the same files and techniques we looked at 
 
 It seems excessive to check the NY Times API every time we go to the home page.
 
-The localStorage and sessionStorage browser APIs let you preristently store data locally in the browser. You use the storage APIs to store data that the browser can access later.
+The localStorage and sessionStorage browser APIs let you presistently store data locally in the browser. You use the storage APIs to store data that the browser can access later.
 
 Some examples include:
 
@@ -34,7 +34,7 @@ Some examples include:
 Data is stored indefinitely, and it must be a string.
 
 ```js
-var value = "good";
+var value = "data that I want to store permanently";
 localStorage.setItem("test", value); // set the item
 localStorage.getItem("test"); // retrieve the item
 localStorage.removeItem("test"); // delete the item
@@ -45,7 +45,7 @@ The data is persistent. You can close the browser and it will still be available
 Session storage works just like localStorage, except the data is cleared when the browser session ends.
 
 ```js
-var value = "The data that I want to store temporarily.";
+var value = "data that I want to store temporarily";
 sessionStorage.setItem("myTempDataKey", value);
 sessionStorage.getItem("myTempDataKey");
 sessionStorage.removeItem("myTempDatakey");
@@ -1189,14 +1189,29 @@ Note: the form will not function correctly on localhost.
 
 Redering multiple pages from data.
 
-products.json in _data folder
+products.json in \_data folder
 
 ```js
 [
-	{ "name": "Electric toasters ", "price": 2.99, "description": "something", "shippingTimeInDays":9 },
-	{ "name": "goo", "price": 9.99, "description": "something else", "shippingTimeInDays":8 },
-	{ "name": "zoo", "price": 1.50, "description": "something more", "shippingTimeInDays":10 }
-]
+  {
+    name: "Electric toasters ",
+    price: 2.99,
+    description: "something",
+    shippingTimeInDays: 9,
+  },
+  {
+    name: "goo",
+    price: 9.99,
+    description: "something else",
+    shippingTimeInDays: 8,
+  },
+  {
+    name: "zoo",
+    price: 1.5,
+    description: "something more",
+    shippingTimeInDays: 10,
+  },
+];
 ```
 
 ```
@@ -1214,26 +1229,21 @@ Using pagination
 layout: "layouts/layout.html"
 tags: "products"
 pagination:
-   data: products
-   size: 1
-   alias: product
+  data: products
+  size: 1
+  alias: product
 permalink: "/product/{{product.name | slug}}/"
 eleventyComputed:
-   title: "{{product.name}}"
+  title: "{{product.name}}"
 ---
-
 
 <h2>{{ product.name }}</h2>
 
-<p>
-{{product.description}}
-</p>
+<p>{{product.description}}</p>
 
 <p>
-It costs ${{product.price}} and ships in {{product.shippingTimeInDays}} days.
+  It costs ${{product.price}} and ships in {{product.shippingTimeInDays}} days.
 </p>
-
-
 ```
 
 ---
