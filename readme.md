@@ -16,8 +16,8 @@ We will be starting out with many of the same files and techniques we looked at 
 - `pages` - our base directory
 - `layouts` - our `layout.html` file now references partials via `include`
 - `.eleventyignore` - instructs 11ty to not process `readme.md` (this file) and the ignore directory
-- `.eleventy.js` - passthroughs for images and JS but not css
-- `home.md` has a new front matter variable: permalink (`/`) in the front matter which means it will always render to the top level (i.e. it becomes `/_site/index.html`)
+- `.eleventy.js` - passthroughs for images, css and JS
+- `home.md` has a front matter variable: permalink (`/`) in the front matter which means it will always render to the top level
 
 ## LocalStorage and SessionStorage
 
@@ -62,8 +62,13 @@ const storagePrefix = "nyt-autosave";
 
 function showData(stories) {
   // omitted for brevity
+  // document.querySelector(".stories").innerHTML = looped;
   sessionStorage.setItem(storagePrefix, looped);
 }
+
+// if (document.querySelector(".home")) {
+//   getStories();
+// }
 
 if (document.querySelector(".home")) {
   var saved = sessionStorage.getItem(storagePrefix);
@@ -82,8 +87,7 @@ if (document.querySelector(".home")) {
 Adapted from [https://www.sohamkamani.com/blog/javascript-localstorage-with-ttl-expiry/](https://www.sohamkamani.com/blog/javascript-localstorage-with-ttl-expiry/)
 
 ```js
-// store the link plus the API key in a variable
-const key = "uQG4jhIEHKHKm0qMKGcTHqUgAolr1GM0";
+const key = "XJYe53T8oZ9wRgPqxGVAs2NtPqId5pdL";
 const API = `https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=${key}`;
 const storagePrefix = "nyt-autosave";
 
@@ -158,7 +162,9 @@ if (document.querySelector(".home")) {
 }
 ```
 
-Use modules:
+## JavaScript Modules
+
+Use modules in `layouts/layout.html`:
 
 ```html
 <script type="module" src="/js/scripts.js"></script>
@@ -218,13 +224,11 @@ Add the first component to `layout.html` after the nav include, e.g.:
 {% include "components/header.html" %}
 ```
 
-### Nesting SASS
-
-Add header CSS to the `_header.scss` file in `scss/imports` and import it into `styles.scss`:
+Add header CSS to `styles.scss`:
 
 ```css
 header {
-  max-width: 980px;
+  width > 980px;
   margin: 0 auto;
   padding-top: 2rem;
   h1 {
@@ -248,41 +252,39 @@ header {
 }
 ```
 
-Inspect the header in the developer tools and note that _mapping_ maps the css line numbers to the scss line numbers
-
-### Media Query - Mobile First
+Inspect the header in the developer tools.
 
 Add a media query to hide the header paragraphs on small screens.
 
 Normally this would be written as:
 
 ```css
-@media (max-width: 780px) {
+@media (width < 780px) {
   header p {
     display: none;
   }
 }
 ```
 
-Because we are nesting with sass we can simply write (in `_header.scss`):
+Because we are nesting we can simply write:
 
 ```css
 p {
   /* ...  */
-  @media (max-width: 780px) {
+  @media (width < 780px) {
     display: none;
   }
 }
 ```
 
-Note: this is _not_ a mobile first design pattern. It uses `max-width` to add display attributes to small screens.
+Note: this is _not_ a mobile first design pattern. It uses `width >` to add display attributes to small screens.
 
-Change it to use a `min-width` mobile first design pattern:
+Change it to use a `width <` mobile first design pattern:
 
 ```css
 p {
   display: none;
-  @media (min-width: 780px) {
+  @media (width > 780px) {
     display: block;
     font-size: 1.5rem;
     text-transform: uppercase;
@@ -294,56 +296,22 @@ p {
 
 ### Variables
 
-In `scss/imports/_variables.scss`:
-
-```scss
-$break-sm: 480px;
-$break-med: 768px;
-$break-wide: 980px;
-
-$max-width: 980px;
-
-$link: #007eb6;
-$hover: #df3030;
-$text: #333;
-$med-gray: #666;
-$light-gray: #ddd;
-$dk-yellow: #dbd1b5;
-```
-
-Import it into `styles.scss`. Be sure to import it first in order to make the variables available to the subsequent imports.
-
-Apply the color and break point variables to `_header.scss`
+Add some CSS variables to the top of `styles.css`:
 
 ```css
-header {
-  max-width: $max-width;
-  margin: 0 auto;
-  padding-top: 2rem;
-  h1 {
-    font-size: 2.5rem;
-  }
-  p {
-    display: none;
-    @media (min-width: $break-med) {
-      display: block;
-      font-size: 1.5rem;
-      text-transform: uppercase;
-      line-height: 1.1;
-      margin-bottom: 1rem;
-    }
-  }
-  h1 + p {
-    padding-top: 1rem;
-    border-top: 3px double $dk-yellow;
-  }
-  p + p {
-    font-size: 1rem;
-    line-height: 1.1;
-    color: $med-gray;
-  }
+:root {
+  --link: #007eb6;
+  --link-light: #02a1e6;
+  --link-dark: #005275;
+  --hover: #df3030;
+  --text: #333;
+  --med-gray: #666;
+  --light-gray: #ddd;
+  --dk-yellow: #dbd1b5;
 }
 ```
+
+Apply the color variables to the CSS.
 
 ## Responsive Main Nav
 
@@ -352,7 +320,7 @@ header {
 Update the [navigation](https://www.11ty.io/docs/) to include an active class using a Liquid `if` statement:
 
 ```html
-<nav aria-label="Primary">
+<nav>
   <ul>
     {% for nav in collections.nav %}
     <li class="{% if nav.url == page.url %} active{% endif %}">
@@ -376,16 +344,12 @@ Add a link `<a href="#" id="pull"></a>` to the nav:
 
 We will use this to show a menu on small screens.
 
-- import `_nav.scss` into `styles.css` with `@import 'imports/nav';`
-
-IMPORTANT - remove all references to nav in `_base.scss`
-
 Small screen first - show and format the hamburger menu:
 
 ```css
 #pull {
   display: block;
-  background-color: $link;
+  background-color: var(--link);
   padding-top: 12px;
   padding-left: 12px;
   width: 100vh;
@@ -405,11 +369,11 @@ Format the ul for the small screen:
 
 ```css
 nav ul {
-  // display: none;
+  /* display: none; */
   padding: 0;
   margin: 0;
   list-style: none;
-  background-color: $link;
+  background-color: var(--link);
 }
 
 nav a {
@@ -424,11 +388,11 @@ nav a {
 }
 
 nav li:hover:not(.active) {
-  background-color: lighten($link, 10%);
+  background-color: var(--link-light);
 }
 
 nav .active {
-  background-color: darken($link, 10%);
+  background-color: var(--link-dark);
 }
 
 nav .active a {
@@ -438,7 +402,7 @@ nav .active a {
 
 ### Show/Hide Nav
 
-Add to the top of `scripts.js`:
+Add to `scripts.js`:
 
 ```js
 var hamburger = document.querySelector("#pull");
@@ -508,10 +472,10 @@ Hide the hamburger on wider screens:
 ```css
 #pull {
   display: block;
-  background-color: $link;
+  background-color: var(--link);
   padding-top: 12px;
   padding-left: 12px;
-  @media (min-width: $break-med) {
+  @media (width > 781px) {
     display: none;
   }
 }
@@ -525,11 +489,11 @@ nav ul {
   padding: 0;
   margin: 0;
   list-style: none;
-  background-color: $link;
-  @media (min-width: $break-med) {
+  background-color: var(--link);
+  @media (width > 781px) {
     display: flex;
     justify-content: space-around;
-    background: $link;
+    background: var(--link);
     text-align: center;
   }
 }
@@ -539,20 +503,18 @@ Format the flex children with `flex-grow` to allow the li's to expand.
 
 ```scss
 // nav li:hover:not(.active) {
-//   background-color: lighten($link, 10%);
+//   background-color: var(--link-light);
 // }
 
 nav li {
   &:hover:not(.active) {
-    background-color: lighten($link, 10%);
+    background-color: var(--link-light);
   }
-  @media (min-width: $break-med) {
+  @media (width > 781px) {
     flex-grow: 1;
   }
 }
 ```
-
-The complex selector with the ampersand compiles to `nav li:hover:not(.active)`. Without the ampersand it compiles to `nav li :hover:not(.active)`. See [CSS Tricks](https://css-tricks.com/the-sass-ampersand/) for more information on the ampersand in SASS.
 
 Check the navigation on both sizes and make adjustments as necessary.
 
@@ -573,7 +535,7 @@ date: 2010-01-01
 postTitle: Services
 ---
 
-![rando image](https://source.unsplash.com/ITjiVXcwVng/300x200)
+![rando image](/img/images-9.jpg)
 
 # Our Services
 
@@ -591,7 +553,7 @@ date: 2010-01-01
 postTitle: People
 ---
 
-![rando image](https://source.unsplash.com/gYl-UtwNg_I/300x200)
+![rando image](/img/images-10.jpg)
 
 # People
 
@@ -660,7 +622,7 @@ date: 2019-01-01
 
 Go to the videos section of the website and examine the component's HTML using the dev tools.
 
-Format the video and buttons in a new `_videos.scss` partial:
+Format the video and buttons:
 
 ```css
 .content-video {
@@ -678,12 +640,19 @@ Format the video and buttons in a new `_videos.scss` partial:
     }
     .active {
       border-radius: 4px;
-      background: $link;
+      background: var(--link);
       color: #fff;
       padding: 0.5rem;
     }
   }
 }
+```
+
+Change the iframe `height` to use `aspect-ratio`:
+
+```css
+/* height: 320px; */
+aspect-ratio: 20 / 9;
 ```
 
 Clicking the buttons should reveal a different video.
@@ -693,6 +662,33 @@ One method for doing this might look like:
 ```js
 const iFrame = document.querySelector("iframe");
 const videoLinks = document.querySelectorAll(".content-video a");
+
+for (let i = 0; i < videoLinks.length; i++) {
+  videoLinks[i].addEventListener("click", selectVideo);
+}
+
+function selectVideo(event) {
+  removeActiveClass();
+  this.classList.add("active");
+  const videoToPlay = event.target.getAttribute("href");
+  iFrame.setAttribute("src", videoToPlay);
+  event.preventDefault();
+}
+
+function removeActiveClass() {
+  for (let i = 0; i < videoLinks.length; i++) {
+    videoLinks[i].classList.remove("active");
+  }
+}
+```
+
+But since a NodeList offers a `forEach` method we could elect to use that:
+
+```js
+const iFrame = document.querySelector("iframe");
+const videoLinks = document.querySelectorAll(".content-video a");
+
+// NEW
 videoLinks.forEach((videoLink) =>
   videoLink.addEventListener("click", selectVideo)
 );
@@ -705,12 +701,13 @@ function selectVideo(event) {
   event.preventDefault();
 }
 
+// NEW
 function removeActiveClass() {
   videoLinks.forEach((videoLink) => videoLink.classList.remove("active"));
 }
 ```
 
-However, we already have event delegation set up for click events so we can add an if statement to handle clicks on our video buttons:
+Since we already have event delegation set up for click events we can add an if statement to handle clicks on our video buttons:
 
 ```js
 function clickHandlers(event) {
@@ -758,60 +755,6 @@ function videoSwitch(event) {
 }
 ```
 
-To support a side-by-side layout on wide screens we'll leverage the `section` tag in `_base.scss`:
-
-```css
-section {
-  @media (min-width: $break-med) {
-    max-width: $max-width;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-column-gap: 1rem;
-    padding-top: 2rem;
-    article {
-      iframe {
-        min-height: 300px;
-      }
-    }
-  }
-}
-
-p {
-  margin: 1rem 0;
-}
-```
-
-Note that we can use the `{{ content }}` liquid object to add additional content to our pages.
-
-In `layouts/videos.html`:
-
-```md
----
-layout: layouts/layout.html
----
-
-<section>{% include "components/video.html" %}</section>
-
-{{ content }}
-```
-
-And in `pages/videos.md`
-
-```md
----
-layout: layouts/videos.html
-pageTitle: Videos
-navTitle: Videos
-pageClass: videos
-date: 2019-01-01
----
-
-Insisting that they had taken every measure to keep the message “extra top secret,” the Trump boys reportedly spent Wednesday defending their decision to send Saudi Arabia plans for a cool missile using their personal Etch A Sketch. “We spent, like, a million hours making that rocket look super good, so we had to send it to our friends in Sunny Arabia."
-
-[Home](/)
-```
-
 ## Image Carousel
 
 Add a new layout file `images.html` to `_includes/layouts`:
@@ -837,15 +780,16 @@ date: 2019-02-01
 [Home](/)
 ```
 
-Do a DOM review of this section of the page.
+Do a DOM review of `_includes/components/images.html`.
 
-In a new SASS partial `_carousel.scss`:
+Format the images:
 
 ```css
 .secondary aside {
   ul {
     margin: 0;
     padding: 0;
+    list-style: none;
     display: flex;
     flex-wrap: wrap;
     align-content: space-around;
@@ -854,7 +798,7 @@ In a new SASS partial `_carousel.scss`:
       margin: 2px;
       padding: 4px;
       background-color: #fff;
-      border: 1px solid $dk-yellow;
+      border: 1px solid var(--dk-yellow);
       transition: all 0.2s linear;
       &:hover {
         transform: scale(1.1);
@@ -865,11 +809,13 @@ In a new SASS partial `_carousel.scss`:
 }
 ```
 
-Note the transition:
+Note the transition.
 
 ### Content Slider
 
 Style the large image on the images page
+
+<!-- // HERE -->
 
 ```css
 figure {
@@ -880,7 +826,7 @@ figure {
     background: rgba(0, 0, 0, 0.5);
     color: #fff;
     position: absolute;
-    bottom: 0;
+    bottom: 20px;
   }
 }
 ```
@@ -1074,8 +1020,8 @@ textarea {
 
 button {
   padding: 6px;
-  border: 1px solid $link;
-  background-color: $link;
+  border: 1px solid var(--link);
+  background-color: var(--link);
   color: #fff;
   cursor: pointer;
 }
@@ -1086,12 +1032,12 @@ There are a number of useful pseudo selectors associated with forms that you sho
 ```css
 input:focus,
 textarea:focus {
-  box-shadow: 0 0 15px lighten($link, 40%);
+  box-shadow: 0 0 15px lighten(var(--link), 40%);
 }
 
 input:required,
 textarea:required {
-  background-color: lighten($link, 60%);
+  background-color: lighten(var(--link), 60%);
 }
 
 input:valid,
@@ -1387,20 +1333,20 @@ input[type="radio"] {
 
 button {
   padding: 6px;
-  border: 1px solid $link;
-  background-color: $link;
+  border: 1px solid var(--link);
+  background-color: var(--link);
   color: #fff;
   cursor: pointer;
 }
 
 input:focus,
 textarea:focus {
-  box-shadow: 0 0 15px lighten($link, 40%);
+  box-shadow: 0 0 15px lighten(var(--link), 40%);
 }
 
 input:required,
 textarea:required {
-  background-color: lighten($link, 60%);
+  background-color: lighten(var(--link), 60%);
 }
 
 input:valid,
