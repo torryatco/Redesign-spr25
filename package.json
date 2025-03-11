@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "session 8",
   "main": "index.js",
-  "scripts": {
+  "scripts": { 
     "rimraf": "rimraf _site",
     "11ty": "eleventy --serve",
     "start": "npm-run-all -p rimraf 11ty"

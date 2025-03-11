@@ -1,6 +1,7 @@
 // store the link plus the API key in a variable
-const key = "XJYe53T8oZ9wRgPqxGVAs2NtPqId5pdL";
+const key = "oaYKxOcZGSOFnkfg6AXbkpNBhsGsDfv9";
 const API = `https://api.nytimes.com/svc/topstories/v2/nyregion.json?api-key=${key}`;
+const storagePrefix = "nyt-autosave";
 
 function getStories() {
   fetch(API)
@@ -27,8 +28,32 @@ function showData(stories) {
     .join("");
 
   document.querySelector(".stories").innerHTML = looped;
+
+  sessionStorage.setItem(storagePrefix, looped);
 }
 
+// if (document.querySelector(".home")) {
+//   getStories();
+// }
+
 if (document.querySelector(".home")) {
-  getStories();
+  var saved = sessionStorage.getItem(storagePrefix);
+  if (saved) {
+    console.log("loading from sessionStorage");
+    document.querySelector(".stories").innerHTML = saved;
+  } else {
+    console.log("fetching from nytimes");
+    getStories();
+  }
+}
+
+document.addEventListener("click", clickHandlers);
+
+function clickHandlers(event) {
+  console.log(event.target);
+  if (event.target.matches("#pull")) {
+    document.querySelector("body").classList.toggle("show-nav");
+    event.preventDefault();
+  }
+  // event.preventDefault();
 }
